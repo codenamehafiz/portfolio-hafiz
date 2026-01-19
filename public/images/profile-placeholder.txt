@@ -1,0 +1,14 @@
+PROFILE IMAGE PLACEHOLDER
+
+Replace this file with your actual profile image!
+
+Recommended image specifications:
+- Name: profile.jpg (or profile.png)
+- Size: 500x500 pixels (square)
+- Format: JPG or PNG
+- File size: Under 500KB for optimal performance
+- Style: Professional headshot or portrait
+
+Once you add your image, delete this placeholder file.
+
+Example file path: public/images/profile.jpg
