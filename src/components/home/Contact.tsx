@@ -2,43 +2,45 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 import { HiLocationMarker, HiMail, HiPhone } from 'react-icons/hi';
+import { useNavigation } from '@/context/NavigationContext';
 
 const socialLinks = [
   {
     name: 'GitHub',
     icon: FaGithub,
-    href: 'https://github.com/yourusername',
+    href: 'https://github.com/codenamehafiz',
     color: 'hover:text-gray-900 dark:hover:text-white'
   },
   {
     name: 'LinkedIn',
     icon: FaLinkedin,
-    href: 'https://linkedin.com/in/yourusername',
+    href: 'https://linkedin.com/in/muhammad-hafiz-mohd-idris-50b403109',
     color: 'hover:text-blue-600 dark:hover:text-blue-400'
   },
   {
-    name: 'Twitter',
-    icon: FaTwitter,
-    href: 'https://twitter.com/yourusername',
-    color: 'hover:text-sky-500 dark:hover:text-sky-400'
+    name: 'WhatsApp',
+    icon: FaWhatsapp,
+    href: 'https://wa.me/60175420192',
+    color: 'hover:text-green-500 dark:hover:text-green-400'
   },
   {
     name: 'Email',
     icon: FaEnvelope,
-    href: 'mailto:your.email@example.com',
+    href: 'mailto:codenamehafiz@gmail.com',
     color: 'hover:text-red-600 dark:hover:text-red-400'
   },
 ];
 
 const contactInfo = [
-  { icon: HiMail, label: 'Email', value: 'your.email@example.com', href: 'mailto:your.email@example.com' },
-  { icon: HiPhone, label: 'Phone', value: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-  { icon: HiLocationMarker, label: 'Location', value: 'San Francisco, CA', href: null },
+  { icon: HiMail, label: 'Email', value: 'codenamehafiz@gmail.com', href: 'mailto:codenamehafiz@gmail.com' },
+  { icon: HiPhone, label: 'Phone', value: '+60 17-542 0192', href: 'tel:+60175420192' },
+  { icon: HiLocationMarker, label: 'Location', value: 'Johor, Malaysia', href: null },
 ];
 
 export default function Contact() {
+  const { slideComplete } = useNavigation();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [formState, setFormState] = useState({
@@ -50,17 +52,26 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  const ready = slideComplete && isInView;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    // Replace this with actual form submission logic (e.g., Resend, FormSpree)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setSubmitStatus('success');
-      setFormState({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
+      const response = await fetch('https://formspree.io/f/xlgwglon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormState({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -76,47 +87,46 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="section-padding relative">
-      {/* Blueprint line separator at top */}
-      <div className="absolute top-0 left-0 right-0 h-16 border-t-2 border-dashed border-primary-300/30 dark:border-accent-700/30 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-400/40 to-transparent dark:via-accent-600/40" />
-        {/* Corner marks */}
-        <div className="absolute top-0 left-8 w-px h-4 bg-primary-400/50 dark:bg-accent-600/50" />
-        <div className="absolute top-0 right-8 w-px h-4 bg-primary-400/50 dark:bg-accent-600/50" />
-        {/* Center measurement mark */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-          <div className="w-px h-3 bg-primary-400/50 dark:bg-accent-600/50" />
-          <div className="w-2 h-2 border border-primary-400/50 dark:border-accent-600/50 rotate-45 mt-1" />
-        </div>
-      </div>
+    <section id="contact" className="pt-24 pb-16 md:pb-24 relative">
 
-      <div className="container-custom">
+      {/* Dot pattern background */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.15] dark:opacity-[0.07]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+        }}
+      />
+
+      <div className="container-custom relative">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.6 }}
+          animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          transition={{ duration: 0.45 }}
         >
           {/* Section Header */}
           <div className="text-center mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.2 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
               className="text-3xl md:text-4xl font-bold mb-4"
             >
               Get In <span className="heading-gradient">Touch</span>
             </motion.h2>
             <motion.div
               initial={{ width: 0 }}
-              animate={isInView ? { width: '64px' } : { width: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+              animate={ready ? { width: '64px' } : { width: 0 }}
+              transition={{ delay: 0.2, duration: 0.45 }}
               className="h-1 bg-gradient-to-r from-primary-600 to-accent-600 mx-auto rounded-full"
             />
             <motion.p
               initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ delay: 0.5 }}
+              animate={ready ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.35, delay: 0.3 }}
               className="mt-4 text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
             >
               Have a project in mind or want to collaborate? Feel free to reach out!
@@ -127,8 +137,8 @@ export default function Contact() {
             {/* Contact Information */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-              transition={{ delay: 0.3 }}
+              animate={ready ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
               className="space-y-8"
             >
               <div>
@@ -147,8 +157,8 @@ export default function Contact() {
                   <motion.div
                     key={info.label}
                     initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
+                    animate={ready ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ duration: 0.35, delay: 0.25 + index * 0.08 }}
                     className="flex items-center space-x-4"
                   >
                     <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
@@ -182,8 +192,8 @@ export default function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ delay: 0.7 + index * 0.1 }}
+                      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                      transition={{ duration: 0.35, delay: 0.45 + index * 0.08 }}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       className={`p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 ${social.color} transition-colors`}
@@ -199,10 +209,13 @@ export default function Contact() {
             {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-              transition={{ delay: 0.4 }}
+              animate={ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+              transition={{ duration: 0.4, delay: 0.25 }}
             >
               <form onSubmit={handleSubmit} className="card p-6 sm:p-8 space-y-6">
+                {/* Honeypot field — hidden from humans, traps bots */}
+                <input type="text" name="_gotcha" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">

@@ -4,12 +4,15 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { HiSearch, HiX } from 'react-icons/hi';
+import { HiSearch, HiX, HiArrowRight } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { HiExternalLink } from 'react-icons/hi';
 import { projects, technologies } from '@/data/projects';
+import ScrollToTop from '@/components/ui/ScrollToTop';
+import { useNavigation } from '@/context/NavigationContext';
 
-export default function ProjectsPage() {
+export default function ProjectsListing() {
+  const { slideComplete } = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
 
@@ -41,12 +44,13 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="pt-24 pb-16">
       <div className="container-custom">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={slideComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.4 }}
           className="text-center mb-12 px-4"
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
@@ -60,8 +64,8 @@ export default function ProjectsPage() {
         {/* Search and Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          animate={slideComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.4, delay: 0.08 }}
           className="mb-12 space-y-6"
         >
           {/* Search Bar */}
@@ -145,28 +149,32 @@ export default function ProjectsPage() {
         {filteredProjects.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            animate={slideComplete ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
+                animate={slideComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.35, delay: 0.08 * index }}
               >
-                <Link href={`/projects/${project.id}`}>
-                  <div className="card card-hover h-full overflow-hidden group cursor-pointer">
-                    {/* Image */}
-                    <div className="relative h-48 overflow-hidden">
+                <div className="card card-hover h-full overflow-hidden group">
+                  {/* Image */}
+                  <Link href={`/projects/${project.id}`} className="block">
+                    <div className="relative h-48 overflow-hidden cursor-pointer">
                       <Image
                         src={project.image}
                         alt={project.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="text-white font-medium text-sm bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                          View Details
+                        </span>
+                      </div>
 
                       {/* Featured Badge */}
                       {project.featured && (
@@ -177,84 +185,89 @@ export default function ProjectsPage() {
                         </div>
                       )}
                     </div>
+                  </Link>
 
-                    {/* Content */}
-                    <div className="p-6 space-y-4">
-                      <div>
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  {/* Content */}
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <div className="flex items-start justify-between mb-2">
+                        <Link href={`/projects/${project.id}`}>
+                          <h3 className="text-xl font-bold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer">
                             {project.title}
                           </h3>
-                        </div>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {project.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-2 py-1 text-xs font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3">
-                          {project.description}
-                        </p>
+                        </Link>
                       </div>
 
-                      {/* Technologies */}
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.slice(0, 4).map((tech) => (
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {project.tags.map((tag) => (
                           <span
-                            key={tech}
-                            className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
+                            key={tag}
+                            className="px-2 py-1 text-xs font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded"
                           >
-                            {tech}
+                            {tag}
                           </span>
                         ))}
-                        {project.technologies.length > 4 && (
-                          <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">
-                            +{project.technologies.length - 4}
-                          </span>
-                        )}
                       </div>
 
-                      {/* Links */}
-                      <div className="flex items-center space-x-2 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        {project.githubUrl && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
-                            }}
-                            className="flex-1 btn-secondary text-center py-2"
-                            aria-label="View GitHub repository"
-                          >
-                            <FaGithub className="w-4 h-4 inline mr-2" />
-                            Code
-                          </button>
-                        )}
-                        {project.liveUrl && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
-                            }}
-                            className="flex-1 btn-primary text-center py-2"
-                            aria-label="View live demo"
-                          >
-                            <HiExternalLink className="w-4 h-4 inline mr-2" />
-                            Demo
-                          </button>
-                        )}
-                      </div>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-2">
+                      {project.technologies.slice(0, 4).map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.technologies.length > 4 && (
+                        <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">
+                          +{project.technologies.length - 4}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Links */}
+                    <div className="flex items-center space-x-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 btn-secondary text-center py-2"
+                          aria-label="View GitHub repository"
+                        >
+                          <FaGithub className="w-4 h-4 inline mr-2" />
+                          Code
+                        </a>
+                      )}
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 btn-primary text-center py-2"
+                          aria-label="View live demo"
+                        >
+                          <HiExternalLink className="w-4 h-4 inline mr-2" />
+                          Demo
+                        </a>
+                      )}
+                      <Link
+                        href={`/projects/${project.id}`}
+                        className="flex-1 btn-secondary text-center py-2 inline-flex items-center justify-center gap-1 group/details"
+                      >
+                        Details
+                        <HiArrowRight className="w-4 h-4 transition-transform group-hover/details:translate-x-1" />
+                      </Link>
                     </div>
                   </div>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -275,6 +288,8 @@ export default function ProjectsPage() {
           </motion.div>
         )}
       </div>
+
+      <ScrollToTop />
     </div>
   );
 }

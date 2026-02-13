@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(timeout 8 curl:*)",
+      "Bash(npx next build:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:codenamehafiz.github.io)",
+      "Bash(curl:*)",
+      "WebFetch(domain:m-amirqushairi-jais.vercel.app)"
+    ]
+  }
+}

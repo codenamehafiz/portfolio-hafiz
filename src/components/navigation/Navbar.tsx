@@ -1,215 +1,227 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { HiMenu, HiX, HiSun, HiMoon } from 'react-icons/hi';
+import { motion } from 'framer-motion';
+import { SiGithub, SiLinkedin, SiWhatsapp } from 'react-icons/si';
 import { useTheme } from '@/providers/theme-provider';
-import { usePageNavigation } from '@/app/page';
+import { useNavigation, type Page } from '@/context/NavigationContext';
+import SunMoonToggle from '@/components/ui/SunMoonToggle';
 
-const navLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Contact', href: '#contact' },
+const navLinks: { name: string; page: Page }[] = [
+  { name: 'Home', page: 'home' },
+  { name: 'About', page: 'about' },
+  { name: 'Projects', page: 'projects' },
+  { name: 'Contact', page: 'contact' },
 ];
 
+const subPageLinks = navLinks.filter((l) => l.page !== 'home');
+
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
   const { theme, toggleTheme } = useTheme();
-  const pathname = usePathname();
-  const { currentPage, navigateToHero, navigateToMain } = usePageNavigation();
+  const { currentPage, navigateTo } = useNavigation();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-
-      // If on hero page, set active to home
-      if (currentPage === 'hero') {
-        setActiveSection('home');
-        return;
-      }
-
-      // Detect active section on main page
-      const sections = ['about', 'experience', 'projects', 'skills', 'contact'];
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
-
-    handleScroll(); // Run on mount
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [currentPage]);
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setIsOpen(false);
-
-    const targetId = href.replace('#', '');
-
-    // If clicking Home, go back to hero page
-    if (targetId === 'home') {
-      navigateToHero();
-      return;
-    }
-
-    // For other sections, navigate to main page if not already there
-    if (currentPage === 'hero') {
-      navigateToMain();
-      // After transition, scroll to the section
-      setTimeout(() => {
-        const element = document.getElementById(targetId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 700);
-    } else {
-      // Already on main page, just scroll
-      const element = document.getElementById(targetId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+  const handleNavClick = (page: Page) => {
+    navigateTo(page);
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-white/70 dark:bg-ink/70 backdrop-blur-xl shadow-sm border-b border-primary-200/30 dark:border-accent-800/30'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="container-custom">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <a
-            href="#home"
-            onClick={(e) => handleLinkClick(e, '#home')}
-            className="flex items-center space-x-2 group"
-          >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-2xl font-bold"
+    <>
+      {/* Desktop: Home page — social links + line */}
+      {currentPage === 'home' && (
+        <nav
+          className="hidden md:flex fixed top-0 bottom-0 left-3 z-50 flex-col items-center pt-16 pb-6 pl-2 pr-3"
+          aria-label="Social links"
+        >
+          <div className="group flex flex-col items-center gap-3">
+            <motion.a
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              href="https://github.com/codenamehafiz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-7 h-7 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 hover:bg-ink/5 dark:hover:bg-primary-100/10 rounded transition-all duration-200"
+              aria-label="GitHub"
             >
-              <span className="heading-gradient">{'<HI />'}</span>
-            </motion.div>
-          </a>
+              <SiGithub className="w-5 h-5" />
+            </motion.a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => {
-              const sectionId = link.href.replace('#', '');
-              const isActive = activeSection === sectionId;
+            <motion.a
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              href="https://www.linkedin.com/in/muhammad-hafiz-mohd-idris-50b403109/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-7 h-7 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 hover:bg-ink/5 dark:hover:bg-primary-100/10 rounded transition-all duration-200"
+              aria-label="LinkedIn"
+            >
+              <SiLinkedin className="w-5 h-5" />
+            </motion.a>
+
+            <motion.a
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              href="https://wa.me/60175420192"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-7 h-7 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 hover:bg-ink/5 dark:hover:bg-primary-100/10 rounded transition-all duration-200"
+              aria-label="WhatsApp"
+            >
+              <SiWhatsapp className="w-5 h-5" />
+            </motion.a>
+
+            <div className="w-px h-16 group-hover:h-24 bg-ink-soft/70 dark:bg-primary-300/70 group-hover:bg-ink dark:group-hover:bg-primary-100 transition-all duration-300" />
+          </div>
+        </nav>
+      )}
+
+      {/* Desktop: Other pages — Home button + line at top, page links at bottom */}
+      {currentPage !== 'home' && (
+        <nav
+          className="hidden md:flex fixed top-0 bottom-0 left-3 z-50 flex-col items-center justify-between pt-16 pb-6 pl-2 pr-3"
+          aria-label="Section navigation"
+        >
+          {/* Top: Home */}
+          <div className="group flex flex-col items-center gap-3">
+            <button
+              onClick={() => handleNavClick('home')}
+              className="relative flex items-center justify-center"
+              aria-label="Home"
+              style={{ writingMode: 'vertical-rl' }}
+            >
+              <span
+                className="text-xs uppercase tracking-widest transition-all duration-200 rotate-180 select-none font-normal text-ink-soft/70 dark:text-primary-300/70 group-hover:text-ink dark:group-hover:text-primary-100 py-2 px-1 rounded group-hover:bg-ink/5 dark:group-hover:bg-primary-100/10"
+              >
+                Home
+              </span>
+            </button>
+            <div className="w-px h-16 group-hover:h-24 bg-ink-soft/70 dark:bg-primary-300/70 group-hover:bg-ink dark:group-hover:bg-primary-100 transition-all duration-300" />
+          </div>
+
+          {/* Bottom: Page links */}
+          <div className="flex flex-col items-center gap-6">
+            {subPageLinks.map((link) => {
+              const isActive = currentPage === link.page;
 
               return (
-                <a
+                <button
                   key={link.name}
-                  href={link.href}
-                  onClick={(e) => handleLinkClick(e, link.href)}
-                  className={`relative text-sm font-medium transition-colors hover:text-ink dark:hover:text-primary-100 ${
-                    isActive
-                      ? 'text-ink dark:text-primary-100'
-                      : 'text-ink-soft dark:text-primary-300'
-                  }`}
+                  onClick={() => handleNavClick(link.page)}
+                  className="relative flex items-center justify-center group"
+                  aria-label={link.name}
+                  style={{ writingMode: 'vertical-rl' }}
                 >
-                  {link.name}
+                  {/* Active indicator — horizontal line to the right of text */}
                   {isActive && (
                     <motion.div
-                      layoutId="navbar-indicator"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-ink dark:bg-primary-100"
+                      layoutId="nav-active-indicator"
+                      className="absolute -right-2 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-ink dark:bg-primary-100 rounded-full"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                </a>
-              );
-            })}
 
-            {/* Theme Toggle */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-primary-200/50 dark:bg-accent-800/50 text-ink dark:text-primary-200 hover:bg-primary-300/70 dark:hover:bg-accent-700/70 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
-            </motion.button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-4">
-            {/* Mobile Theme Toggle */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-primary-200/50 dark:bg-accent-800/50 text-ink dark:text-primary-200"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-ink dark:text-primary-200"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/90 dark:bg-ink/90 backdrop-blur-xl border-t border-primary-200/50 dark:border-accent-800/50"
-          >
-            <div className="container-custom py-4 space-y-3">
-              {navLinks.map((link) => {
-                const sectionId = link.href.replace('#', '');
-                const isActive = activeSection === sectionId;
-
-                return (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={(e) => handleLinkClick(e, link.href)}
-                    className={`block py-2 text-base font-medium transition-colors ${
+                  <span
+                    className={`text-xs uppercase tracking-widest transition-all duration-200 rotate-180 select-none py-2 px-1 rounded ${
                       isActive
-                        ? 'text-ink dark:text-primary-100'
-                        : 'text-ink-soft dark:text-primary-300'
+                        ? 'font-semibold text-ink dark:text-primary-100'
+                        : 'font-normal text-ink-soft/70 dark:text-primary-300/70 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:bg-ink/5 dark:group-hover:bg-primary-100/10'
                     }`}
                   >
                     {link.name}
-                  </a>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+
+      {/* Mobile: Home page — social links + toggle */}
+      {currentPage === 'home' && (
+        <nav
+          className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-5 py-3 rounded-full bg-white/60 dark:bg-ink/60 backdrop-blur-xl border border-primary-200/30 dark:border-accent-800/30 shadow-lg"
+          aria-label="Social links"
+        >
+          <motion.a
+            whileTap={{ scale: 0.9 }}
+            href="https://github.com/codenamehafiz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-5 h-5 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 transition-colors"
+            aria-label="GitHub"
+          >
+            <SiGithub className="w-4 h-4" />
+          </motion.a>
+
+          <motion.a
+            whileTap={{ scale: 0.9 }}
+            href="https://www.linkedin.com/in/muhammad-hafiz-mohd-idris-50b403109/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-5 h-5 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 transition-colors"
+            aria-label="LinkedIn"
+          >
+            <SiLinkedin className="w-4 h-4" />
+          </motion.a>
+
+          <motion.a
+            whileTap={{ scale: 0.9 }}
+            href="https://wa.me/60175420192"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-5 h-5 text-ink-soft/70 dark:text-primary-300/70 hover:text-ink dark:hover:text-primary-100 transition-colors"
+            aria-label="WhatsApp"
+          >
+            <SiWhatsapp className="w-4 h-4" />
+          </motion.a>
+
+          <div className="w-1.5 h-1.5 rounded-full bg-ink-soft/40 dark:bg-primary-300/40" />
+
+          <SunMoonToggle isDark={theme === 'dark'} onClick={toggleTheme} size="sm" />
+        </nav>
+      )}
+
+      {/* Mobile: Other pages — bottom nav bar */}
+      {currentPage !== 'home' && (
+        <nav
+          className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-full bg-white/60 dark:bg-ink/60 backdrop-blur-xl border border-primary-200/30 dark:border-accent-800/30 shadow-lg"
+          aria-label="Section navigation"
+        >
+          {navLinks.map((link) => {
+            const isActive = currentPage === link.page;
+
+            return (
+              <button
+                key={link.name}
+                onClick={() => handleNavClick(link.page)}
+                className="relative flex flex-col items-center px-1 py-0.5"
+                aria-label={link.name}
+              >
+                {/* Active indicator — underline */}
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active-mobile"
+                    className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 h-[2px] w-3 bg-ink dark:bg-primary-100 rounded-full"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+
+                <span
+                  className={`text-[10px] uppercase tracking-wide transition-all duration-200 select-none ${
+                    isActive
+                      ? 'font-semibold text-ink dark:text-primary-100'
+                      : 'font-normal text-ink-soft/50 dark:text-primary-300/50'
+                  }`}
+                >
+                  {link.name}
+                </span>
+              </button>
+            );
+          })}
+
+          <div className="h-4 w-px bg-primary-200/50 dark:bg-accent-800/50 mx-0.5" />
+
+          <SunMoonToggle isDark={theme === 'dark'} onClick={toggleTheme} size="sm" />
+        </nav>
+      )}
+    </>
   );
 }

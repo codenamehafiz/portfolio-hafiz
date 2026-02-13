@@ -55,6 +55,11 @@ const config: Config = {
         'slide-down': 'slideDown 0.5s ease-out',
         'scale-in': 'scaleIn 0.3s ease-out',
         'float': 'float 6s ease-in-out infinite',
+        'marquee-left': 'marqueeLeft var(--duration, 30s) linear infinite',
+        'marquee-right': 'marqueeRight var(--duration, 30s) linear infinite',
+        'aurora-1': 'aurora1 15s ease-in-out infinite',
+        'aurora-2': 'aurora2 20s ease-in-out infinite',
+        'aurora-3': 'aurora3 18s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -76,6 +81,29 @@ const config: Config = {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-20px)' },
+        },
+        marqueeLeft: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marqueeRight: {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        aurora1: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(10%, 15%) scale(1.1)' },
+          '66%': { transform: 'translate(-5%, 5%) scale(0.95)' },
+        },
+        aurora2: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(-15%, -10%) scale(1.05)' },
+          '66%': { transform: 'translate(10%, -5%) scale(1.1)' },
+        },
+        aurora3: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(5%, -15%) scale(1.15)' },
+          '66%': { transform: 'translate(-10%, 10%) scale(0.9)' },
         },
       },
       backgroundImage: {

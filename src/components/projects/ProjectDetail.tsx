@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import { HiArrowLeft, HiExternalLink, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { HiArrowLeft, HiExternalLink, HiChevronLeft, HiChevronRight, HiX } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { Project } from '@/data/projects';
 
@@ -13,18 +13,28 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project }: ProjectDetailProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const extraImages = project.images.slice(1);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
+  const imageRef = useRef<HTMLImageElement>(null);
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % project.images.length);
-  };
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? project.images.length - 1 : prev - 1
-    );
-  };
-
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') setLightboxIndex((prev) => (prev! + 1) % extraImages.length);
+      if (e.key === 'ArrowLeft') setLightboxIndex((prev) => (prev === 0 ? extraImages.length - 1 : prev! - 1));
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [lightboxIndex, extraImages.length, closeLightbox]);
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container-custom">
@@ -43,143 +53,78 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           </Link>
         </motion.div>
 
-        {/* Project Header */}
+        {/* About This Project — image left, details right */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="mb-12"
         >
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
-            <div className="flex-1">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-                {project.title}
-              </h1>
-              <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl">
-                {project.description}
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0 w-full lg:w-auto">
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary w-full sm:w-auto text-center"
-                >
-                  <HiExternalLink className="w-5 h-5 mr-2 inline" />
-                  Live Demo
-                </a>
-              )}
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline w-full sm:w-auto text-center"
-                >
-                  <FaGithub className="w-5 h-5 mr-2 inline" />
-                  View Code
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Tags and Technologies */}
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                Category:
-              </span>
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 text-sm font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Image Gallery */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
-        >
-          <div className="card overflow-hidden">
-            <div className="relative aspect-video bg-slate-200 dark:bg-slate-800">
-              <Image
-                src={project.images[currentImageIndex]}
-                alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                fill
-                className="object-cover"
-              />
-
-              {/* Gallery Navigation */}
-              {project.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 transition-colors"
-                    aria-label="Previous image"
-                  >
-                    <HiChevronLeft className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 transition-colors"
-                    aria-label="Next image"
-                  >
-                    <HiChevronRight className="w-6 h-6" />
-                  </button>
-
-                  {/* Image Indicators */}
-                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                    {project.images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? 'bg-white w-8'
-                            : 'bg-white/50 hover:bg-white/75'
-                        }`}
-                        aria-label={`Go to image ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnail Preview */}
-            {project.images.length > 1 && (
-              <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 bg-slate-50 dark:bg-slate-800/50">
-                {project.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex
-                        ? 'border-primary-600 dark:border-primary-400'
-                        : 'border-transparent hover:border-slate-300 dark:hover:border-slate-600'
-                    }`}
-                  >
-                    <Image
-                      src={image}
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
+          <div className="grid lg:grid-cols-[1fr_3fr] gap-8 items-start">
+            {/* Main Image */}
+            <div className="card overflow-hidden">
+              <div className="relative aspect-[4/3] bg-slate-200 dark:bg-slate-800">
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                />
               </div>
-            )}
+            </div>
+
+            {/* Project Info */}
+            <div className="space-y-5">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3">
+                  {project.title}
+                </h1>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-sm font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-base sm:text-lg">
+                {project.longDescription}
+              </p>
+
+              {/* Action Buttons */}
+              {(project.liveUrl || project.githubUrl) && (
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary text-center"
+                    >
+                      <HiExternalLink className="w-5 h-5 mr-2 inline" />
+                      Live Demo
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline text-center"
+                    >
+                      <FaGithub className="w-5 h-5 mr-2 inline" />
+                      View Code
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </motion.div>
 
@@ -264,6 +209,167 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           </motion.div>
         </div>
 
+        {/* Additional Images Gallery */}
+        {extraImages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="mb-12 max-w-3xl mx-auto"
+          >
+            {/* Main Preview with outside arrows */}
+            <div className="flex items-center gap-3">
+              {/* Left Arrow */}
+              {extraImages.length > 1 && (
+                <button
+                  onClick={() => setActiveIndex((prev) => (prev === 0 ? extraImages.length - 1 : prev - 1))}
+                  className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-md border border-slate-200 dark:border-slate-700"
+                  aria-label="Previous image"
+                >
+                  <HiChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                </button>
+              )}
+
+              <div className="flex-1 min-w-0">
+                <motion.div
+                  className="relative card overflow-hidden cursor-zoom-in"
+                  onClick={() => setLightboxIndex(activeIndex)}
+                  animate={{ height: containerHeight }}
+                  transition={{ duration: 0, ease: 'easeInOut' }}
+                  style={containerHeight ? undefined : { height: 'auto' }}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <Image
+                        ref={imageRef}
+                        src={extraImages[activeIndex]}
+                        alt={`${project.title} - Image ${activeIndex + 2}`}
+                        width={800}
+                        height={600}
+                        className="w-full h-auto"
+                        onLoad={(e) => {
+                          const img = e.currentTarget;
+                          setContainerHeight(img.offsetHeight);
+                        }}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Thumbnail Strip — aligned with image */}
+                {extraImages.length > 1 && (
+                  <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                    {extraImages.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveIndex(index)}
+                        className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                          index === activeIndex
+                            ? 'border-primary-600 dark:border-primary-400 ring-2 ring-primary-600/30 dark:ring-primary-400/30'
+                            : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Right Arrow */}
+              {extraImages.length > 1 && (
+                <button
+                  onClick={() => setActiveIndex((prev) => (prev + 1) % extraImages.length)}
+                  className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-md border border-slate-200 dark:border-slate-700"
+                  aria-label="Next image"
+                >
+                  <HiChevronRight className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Lightbox */}
+        <AnimatePresence>
+          {lightboxIndex !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+              onClick={closeLightbox}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closeLightbox}
+                className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                aria-label="Close lightbox"
+              >
+                <HiX className="w-6 h-6" />
+              </button>
+
+              {/* Nav Arrows */}
+              {extraImages.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev === 0 ? extraImages.length - 1 : prev! - 1)); }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <HiChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev! + 1) % extraImages.length); }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    aria-label="Next image"
+                  >
+                    <HiChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Lightbox Image */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={lightboxIndex}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="max-w-5xl max-h-[85vh] w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Image
+                    src={extraImages[lightboxIndex]}
+                    alt={`${project.title} - Image ${lightboxIndex + 2}`}
+                    width={1400}
+                    height={1000}
+                    className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+                  />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+                {lightboxIndex + 1} / {extraImages.length}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Technologies Used */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -286,24 +392,6 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           </div>
         </motion.div>
 
-        {/* Long Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="mt-12"
-        >
-          <div className="card p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6">
-              About This Project
-            </h2>
-            <div className="prose dark:prose-invert max-w-none">
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-base sm:text-lg">
-                {project.longDescription}
-              </p>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { usePageNavigation } from '@/app/page';
+import { useNavigation, type Page } from '@/context/NavigationContext';
 
 const socialLinks = [
   { name: 'GitHub', icon: FaGithub, href: 'https://github.com/yourusername' },
@@ -11,46 +11,16 @@ const socialLinks = [
   { name: 'Email', icon: FaEnvelope, href: 'mailto:your.email@example.com' },
 ];
 
-const footerLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Contact', href: '#contact' },
+const footerLinks: { name: string; page: Page }[] = [
+  { name: 'Home', page: 'home' },
+  { name: 'About', page: 'about' },
+  { name: 'Projects', page: 'projects' },
+  { name: 'Contact', page: 'contact' },
 ];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { currentPage, navigateToHero, navigateToMain } = usePageNavigation();
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const targetId = href.replace('#', '');
-
-    // If clicking Home, go back to hero page
-    if (targetId === 'home') {
-      navigateToHero();
-      return;
-    }
-
-    // For other sections, navigate to main page if not already there
-    if (currentPage === 'hero') {
-      navigateToMain();
-      // After transition, scroll to the section
-      setTimeout(() => {
-        const element = document.getElementById(targetId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 700);
-    } else {
-      // Already on main page, just scroll
-      const element = document.getElementById(targetId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
+  const { navigateTo } = useNavigation();
 
   return (
     <footer className="bg-white/50 dark:bg-accent-900/30 backdrop-blur-sm border-t border-primary-200/50 dark:border-accent-800/50">
@@ -58,9 +28,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div className="space-y-4">
-            <a href="#home" onClick={(e) => handleLinkClick(e, '#home')} className="inline-block">
+            <button onClick={() => navigateTo('home')} className="inline-block">
               <span className="text-2xl font-bold heading-gradient">{'<HI />'}</span>
-            </a>
+            </button>
             <p className="text-ink-medium dark:text-primary-300 text-sm">
               Full Stack Developer creating bug-free, user-friendly experiences.
             </p>
@@ -74,13 +44,12 @@ export default function Footer() {
             <ul className="space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => handleLinkClick(e, link.href)}
+                  <button
+                    onClick={() => navigateTo(link.page)}
                     className="text-ink-medium dark:text-primary-300 hover:text-ink dark:hover:text-primary-100 transition-colors text-sm cursor-pointer"
                   >
                     {link.name}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>

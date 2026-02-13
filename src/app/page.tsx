@@ -1,77 +1,110 @@
 'use client';
 
-import { useState, createContext, useContext } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NavigationProvider, useNavigation } from '@/context/NavigationContext';
 import Navbar from '@/components/navigation/Navbar';
+import CopyrightNotice from '@/components/navigation/CopyrightNotice';
 import Hero from '@/components/home/Hero';
-import About from '@/components/home/About';
-import Experience from '@/components/home/Experience';
-import FeaturedProjects from '@/components/home/FeaturedProjects';
-import Skills from '@/components/home/Skills';
-import Contact from '@/components/home/Contact';
+import AboutPage from '@/components/pages/AboutPage';
+import ProjectsListing from '@/components/pages/ProjectsListing';
+import ContactPage from '@/components/pages/ContactPage';
 
-// Create context for page navigation
-const PageContext = createContext<{
-  currentPage: 'hero' | 'main';
-  navigateToMain: () => void;
-  navigateToHero: () => void;
-}>({
-  currentPage: 'hero',
-  navigateToMain: () => {},
-  navigateToHero: () => {},
-});
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%' }),
+  center: { x: 0 },
+  exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%' }),
+};
 
-export const usePageNavigation = () => useContext(PageContext);
+const slideTransition = {
+  duration: 0.5,
+  ease: [0.43, 0.13, 0.23, 0.96],
+};
 
-export default function Home() {
-  const [currentPage, setCurrentPage] = useState<'hero' | 'main'>('hero');
+function PageContent() {
+  const { currentPage, direction, isInitialLoad, setSlideComplete } = useNavigation();
+  const [layoutPage, setLayoutPage] = useState(currentPage);
 
-  const navigateToMain = () => setCurrentPage('main');
-  const navigateToHero = () => setCurrentPage('hero');
+  const handleSlideComplete = () => {
+    setSlideComplete(true);
+  };
 
   return (
-    <PageContext.Provider value={{ currentPage, navigateToMain, navigateToHero }}>
+    <div className={`flex flex-col ${layoutPage === 'home' ? 'h-screen' : 'min-h-screen'}`}>
       <Navbar />
-      <div className="relative w-full overflow-hidden">
-        <AnimatePresence mode="wait">
-          {currentPage === 'hero' ? (
+      <div className="relative w-full flex-1 overflow-hidden overflow-y-auto">
+        <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setLayoutPage(currentPage)}>
+          {currentPage === 'home' && (
             <motion.div
-              key="hero"
-              initial={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-              className="w-full"
+              key="home"
+              custom={direction}
+              variants={slideVariants}
+              initial={isInitialLoad ? false : 'enter'}
+              animate="center"
+              exit="exit"
+              transition={slideTransition}
+              onAnimationComplete={(def) => { if (def === 'center') handleSlideComplete(); }}
+              className="w-full h-full"
             >
               <Hero />
             </motion.div>
-          ) : (
+          )}
+          {currentPage === 'about' && (
             <motion.div
-              key="main"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-              className="w-full relative"
+              key="about"
+              custom={direction}
+              variants={slideVariants}
+              initial={isInitialLoad ? false : 'enter'}
+              animate="center"
+              exit="exit"
+              transition={slideTransition}
+              onAnimationComplete={(def) => { if (def === 'center') handleSlideComplete(); }}
+              className="w-full"
             >
-              <About />
-              <Experience />
-              <FeaturedProjects />
-              <Skills />
-              <Contact />
-
-              {/* Copyright Notice */}
-              <div className="absolute bottom-4 right-4 text-right z-40">
-                <p className="text-xs text-ink-medium dark:text-primary-300">
-                  &copy; 2025 Hafiz Idris. All rights reserved.
-                </p>
-                <p className="text-xs text-ink-muted dark:text-primary-400 mt-1">
-                  Built with Next.js, TypeScript & Tailwind CSS
-                </p>
-              </div>
+              <AboutPage />
+            </motion.div>
+          )}
+          {currentPage === 'projects' && (
+            <motion.div
+              key="projects"
+              custom={direction}
+              variants={slideVariants}
+              initial={isInitialLoad ? false : 'enter'}
+              animate="center"
+              exit="exit"
+              transition={slideTransition}
+              onAnimationComplete={(def) => { if (def === 'center') handleSlideComplete(); }}
+              className="w-full"
+            >
+              <ProjectsListing />
+            </motion.div>
+          )}
+          {currentPage === 'contact' && (
+            <motion.div
+              key="contact"
+              custom={direction}
+              variants={slideVariants}
+              initial={isInitialLoad ? false : 'enter'}
+              animate="center"
+              exit="exit"
+              transition={slideTransition}
+              onAnimationComplete={(def) => { if (def === 'center') handleSlideComplete(); }}
+              className="w-full"
+            >
+              <ContactPage />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </PageContext.Provider>
+      <CopyrightNotice />
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <NavigationProvider>
+      <PageContent />
+    </NavigationProvider>
   );
 }

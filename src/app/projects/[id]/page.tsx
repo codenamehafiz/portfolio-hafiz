@@ -4,13 +4,14 @@ import ProjectDetail from '@/components/projects/ProjectDetail';
 import { projects } from '@/data/projects';
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const project = projects.find((p) => p.id === params.id);
+  const { id } = await params;
+  const project = projects.find((p) => p.id === id);
 
   if (!project) {
     return {
@@ -35,8 +36,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ProjectPage({ params }: Props) {
-  const project = projects.find((p) => p.id === params.id);
+export default async function ProjectPage({ params }: Props) {
+  const { id } = await params;
+  const project = projects.find((p) => p.id === id);
 
   if (!project) {
     notFound();
