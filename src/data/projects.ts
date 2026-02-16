@@ -22,7 +22,7 @@ export const projects: Project[] = [
     title: 'Changokushi! Heroes',
     description: 'A fantasy shooting bishoujo RPG mobile game with NFT marketplace integration, featuring Three Kingdoms-era warlords with Japanese voice acting.',
     longDescription: 'Co-developed Changokushi! Heroes, a fantasy shooting RPG mobile game where players take on the role of beautiful warlords from the Three Kingdoms period. The game features Japanese voice acting, NFT character ownership through the KUSO Geeeeee marketplace, and was launched across 11 countries. Built with Unity and supported by a custom server architecture handling real-time gameplay and blockchain transactions.',
-    image: '/images/projects/changokushi-app-store.jpg',
+    image: '/images/projects/changokushi-heroes.jpg',
     images: [
       '/images/projects/changokushi-app-store.jpg',
       '/images/projects/changokushi-gameplay.jpg',
