@@ -68,6 +68,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   src={project.image}
                   alt={project.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 25vw"
                   className="object-cover"
                 />
               </div>
@@ -279,6 +280,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                           src={img}
                           alt={`Thumbnail ${index + 1}`}
                           fill
+                          sizes="80px"
                           className="object-cover"
                         />
                       </button>

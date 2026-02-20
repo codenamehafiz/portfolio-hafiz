@@ -4,6 +4,10 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { skills, skillCategories } from '@/data/skills';
 
+const skillsByCategory = new Map(
+  skillCategories.map((category) => [category, skills.filter((s) => s.category === category)])
+);
+
 export default function Skills() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -30,7 +34,7 @@ export default function Skills() {
           {/* Two-column category grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {skillCategories.map((category, categoryIndex) => {
-              const categorySkills = skills.filter((skill) => skill.category === category);
+              const categorySkills = skillsByCategory.get(category) ?? [];
 
               return (
                 <motion.div

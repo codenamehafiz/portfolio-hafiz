@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavigationProvider, useNavigation } from '@/context/NavigationContext';
 import Navbar from '@/components/navigation/Navbar';
@@ -25,9 +25,9 @@ function PageContent() {
   const { currentPage, direction, isInitialLoad, setSlideComplete } = useNavigation();
   const [layoutPage, setLayoutPage] = useState(currentPage);
 
-  const handleSlideComplete = () => {
+  const handleSlideComplete = useCallback(() => {
     setSlideComplete(true);
-  };
+  }, [setSlideComplete]);
 
   return (
     <div className={`flex flex-col ${layoutPage === 'home' ? 'h-screen' : 'min-h-screen'}`}>
@@ -44,7 +44,7 @@ function PageContent() {
               exit="exit"
               transition={slideTransition}
               onAnimationComplete={(def) => { if (def === 'center') handleSlideComplete(); }}
-              className="w-full h-full"
+              className="w-full min-h-full flex flex-col"
             >
               <Hero />
             </motion.div>

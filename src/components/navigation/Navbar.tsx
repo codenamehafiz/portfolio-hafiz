@@ -19,10 +19,6 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { currentPage, navigateTo } = useNavigation();
 
-  const handleNavClick = (page: Page) => {
-    navigateTo(page);
-  };
-
   return (
     <>
       {/* Desktop: Home page — social links + line */}
@@ -82,7 +78,7 @@ export default function Navbar() {
           {/* Top: Home */}
           <div className="group flex flex-col items-center gap-3">
             <button
-              onClick={() => handleNavClick('home')}
+              onClick={() => navigateTo('home')}
               className="relative flex items-center justify-center"
               aria-label="Home"
               style={{ writingMode: 'vertical-rl' }}
@@ -104,7 +100,7 @@ export default function Navbar() {
               return (
                 <button
                   key={link.name}
-                  onClick={() => handleNavClick(link.page)}
+                  onClick={() => navigateTo(link.page)}
                   className="relative flex items-center justify-center group"
                   aria-label={link.name}
                   style={{ writingMode: 'vertical-rl' }}
@@ -191,7 +187,7 @@ export default function Navbar() {
             return (
               <button
                 key={link.name}
-                onClick={() => handleNavClick(link.page)}
+                onClick={() => navigateTo(link.page)}
                 className="relative flex flex-col items-center px-1 py-0.5"
                 aria-label={link.name}
               >

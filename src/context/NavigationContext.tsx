@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 export type Page = 'home' | 'about' | 'projects' | 'contact';
 
@@ -97,10 +97,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     window.scrollTo(0, 0);
   }, []);
 
+  const value = useMemo(() => ({
+    currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo,
+  }), [currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo]);
+
   if (!isReady) return null;
 
   return (
-    <NavigationContext.Provider value={{ currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo }}>
+    <NavigationContext.Provider value={value}>
       {children}
     </NavigationContext.Provider>
   );

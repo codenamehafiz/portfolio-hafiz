@@ -31,6 +31,15 @@ function AnimatedNumber({ value, delay = 0 }: { value: number; delay?: number })
 
 const INITIAL_DISPLAY_COUNT = 2;
 
+const yearsSummary = [
+  { years: 10, area: 'Web & Software Development' },
+  { years: 8, area: 'Front-end Development & UI/UX' },
+  { years: 4, area: 'Back-end Architecture' },
+  { years: 6, area: 'Product Engineering' },
+  { years: 6, area: 'React Development' },
+  { years: 2, area: 'Cloud Infrastructure' },
+];
+
 const experiences = [
   {
     period: 'Jun 2023 — Feb 2026',
@@ -149,14 +158,7 @@ export default function Experience() {
                 Within those 10 years
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                {[
-                  { years: 10, area: 'Web & Software Development' },
-                  { years: 8, area: 'Front-end Development & UI/UX' },
-                  { years: 4, area: 'Back-end Architecture' },
-                  { years: 6, area: 'Product Engineering' },
-                  { years: 6, area: 'React Development' },
-                  { years: 2, area: 'Cloud Infrastructure' },
-                ].map(({ years, area }, i) => (
+                {yearsSummary.map(({ years, area }, i) => (
                   <div key={area} className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-ink dark:text-primary-50 tabular-nums">
                       <AnimatedNumber value={years} delay={i * 0.1} />

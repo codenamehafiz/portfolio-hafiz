@@ -49,6 +49,7 @@ export default function FeaturedProjects() {
                       src={project.image}
                       alt={project.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
                     />
                   </Link>

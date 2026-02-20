@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,11 +32,19 @@ export default function ProjectsListing() {
     });
   }, [searchQuery, selectedTechs]);
 
-  const toggleTech = (tech: string) => {
+  const projectCountByTech = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const tech of technologies) {
+      counts.set(tech, projects.filter((p) => p.technologies.includes(tech)).length);
+    }
+    return counts;
+  }, []);
+
+  const toggleTech = useCallback((tech: string) => {
     setSelectedTechs((prev) =>
       prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
     );
-  };
+  }, []);
 
   const clearFilters = () => {
     setSearchQuery('');
@@ -107,9 +115,6 @@ export default function ProjectsListing() {
             <div className="flex flex-wrap gap-2">
               {technologies.map((tech) => {
                 const isSelected = selectedTechs.includes(tech);
-                const projectCount = projects.filter((p) =>
-                  p.technologies.includes(tech)
-                ).length;
 
                 return (
                   <button
@@ -122,7 +127,7 @@ export default function ProjectsListing() {
                     }`}
                   >
                     {tech}
-                    <span className="ml-1 sm:ml-2 text-xs opacity-75">({projectCount})</span>
+                    <span className="ml-1 sm:ml-2 text-xs opacity-75">({projectCountByTech.get(tech) ?? 0})</span>
                   </button>
                 );
               })}
@@ -168,6 +173,7 @@ export default function ProjectsListing() {
                         src={project.image}
                         alt={project.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

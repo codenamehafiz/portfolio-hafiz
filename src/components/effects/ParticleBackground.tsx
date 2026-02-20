@@ -46,13 +46,26 @@ export default function ParticleBackground() {
       });
     }
 
+    // Pre-compute opacity-to-color lookup (10 buckets)
+    const fillColors: string[] = [];
+    for (let i = 0; i <= 10; i++) {
+      fillColors.push(`rgba(100,100,120,${(i / 10) * 0.6})`);
+    }
+
     // Animation loop
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const halfW = cw / 2;
+      const halfH = ch / 2;
+
+      ctx.clearRect(0, 0, cw, ch);
 
       const particles = particlesRef.current;
 
-      particles.forEach((particle, i) => {
+      for (let i = 0; i < particles.length; i++) {
+        const particle = particles[i];
+
         // Update position
         particle.x += particle.vx;
         particle.y += particle.vy;
@@ -61,31 +74,29 @@ export default function ParticleBackground() {
         // Reset particle if it goes too far
         if (particle.z < 1) {
           particle.z = 1000;
-          particle.x = Math.random() * canvas.width;
-          particle.y = Math.random() * canvas.height;
+          particle.x = Math.random() * cw;
+          particle.y = Math.random() * ch;
         }
 
         // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
+        if (particle.x < 0) particle.x = cw;
+        if (particle.x > cw) particle.x = 0;
+        if (particle.y < 0) particle.y = ch;
+        if (particle.y > ch) particle.y = 0;
 
         // Calculate 3D projection
         const scale = 1000 / (1000 + particle.z);
-        const x2d = (particle.x - canvas.width / 2) * scale + canvas.width / 2;
-        const y2d = (particle.y - canvas.height / 2) * scale + canvas.height / 2;
+        const x2d = (particle.x - halfW) * scale + halfW;
+        const y2d = (particle.y - halfH) * scale + halfH;
         const size = scale * 3;
-        const opacity = 1 - particle.z / 1000;
+        const opacityBucket = Math.round((1 - particle.z / 1000) * 10);
 
         // Draw particle
         ctx.beginPath();
         ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(100, 100, 120, ${opacity * 0.6})`;
+        ctx.fillStyle = fillColors[opacityBucket];
         ctx.fill();
-
-
-      });
+      }
 
       frameRef.current = requestAnimationFrame(animate);
     };

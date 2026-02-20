@@ -18,6 +18,7 @@ const starPositions = [
 ];
 
 const sunRayAngles = [0, 45, 90, 135, 180, 225, 270, 315];
+const lightRayDegrees = [0, 60, 120, 180, 240, 300];
 
 export default function SunMoonToggle({ isDark, onClick, size = 'md' }: SunMoonToggleProps) {
   const isSm = size === 'sm';
@@ -114,7 +115,7 @@ export default function SunMoonToggle({ isDark, onClick, size = 'md' }: SunMoonT
       <AnimatePresence>
         {!isDark && (
           <>
-            {[0, 60, 120, 180, 240, 300].map((deg) => (
+            {lightRayDegrees.map((deg) => (
               <motion.div
                 key={`ray-${deg}`}
                 className="absolute"

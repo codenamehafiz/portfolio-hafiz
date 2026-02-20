@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { HiDownload } from 'react-icons/hi';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigation, type Page } from '@/context/NavigationContext';
 import ParticleBackground from '@/components/effects/ParticleBackground';
 
@@ -33,6 +33,15 @@ const greetingMessages = [
   "Hi friend! 💙",
 ];
 
+const heroNavItems: { page: Page; label: string; subtitle: string }[] = [
+  { page: 'about', label: 'About', subtitle: 'Experience, skills & background' },
+  { page: 'projects', label: 'Projects', subtitle: 'Things I\'ve built & shipped' },
+  { page: 'contact', label: 'Contact', subtitle: 'Let\'s work together' },
+];
+
+const floatDelay2s = { animationDelay: '2s' } as const;
+const floatDelay4s = { animationDelay: '4s' } as const;
+
 export default function Hero() {
   const [showSmile, setShowSmile] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
@@ -40,7 +49,7 @@ export default function Hero() {
   const timersRef = useRef<NodeJS.Timeout[]>([]);
   const { navigateTo, slideComplete } = useNavigation();
 
-  const triggerAnimation = () => {
+  const triggerAnimation = useCallback(() => {
     // Clear all existing timers to stop current animation
     timersRef.current.forEach(timer => clearTimeout(timer));
     timersRef.current = [];
@@ -66,7 +75,7 @@ export default function Hero() {
       setShowSmile(false);
     }, 1800);
     timersRef.current.push(normalTimer);
-  };
+  }, []);
 
   useEffect(() => {
     triggerAnimation();
@@ -77,22 +86,16 @@ export default function Hero() {
     };
   }, []);
 
-  const heroNavItems: { page: Page; label: string; subtitle: string }[] = [
-    { page: 'about', label: 'About', subtitle: 'Experience, skills & background' },
-    { page: 'projects', label: 'Projects', subtitle: 'Things I\'ve built & shipped' },
-    { page: 'contact', label: 'Contact', subtitle: 'Let\'s work together' },
-  ];
-
   return (
-    <section id="home" className="relative h-full flex items-center justify-center overflow-hidden pt-32 md:pt-16">
+    <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden pt-20 md:pt-8 xl:pt-16">
       {/* Particle Background */}
       <ParticleBackground />
 
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-400/12 dark:bg-accent-600/18 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-400/12 dark:bg-primary-600/18 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 m-auto w-[600px] h-[600px] bg-accent-300/8 dark:bg-accent-700/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-400/12 dark:bg-primary-600/18 rounded-full blur-3xl animate-float" style={floatDelay2s} />
+        <div className="absolute inset-0 m-auto w-[600px] h-[600px] bg-accent-300/8 dark:bg-accent-700/15 rounded-full blur-3xl animate-float" style={floatDelay4s} />
       </div>
 
       <div className="container-custom">
@@ -100,12 +103,12 @@ export default function Hero() {
           variants={container}
           initial="hidden"
           animate={slideComplete ? 'show' : 'hidden'}
-          className="max-w-4xl mx-auto text-center space-y-8 pb-16"
+          className="max-w-4xl mx-auto text-center space-y-6 xl:space-y-8 pb-8 xl:pb-16"
         >
           {/* Profile Icon */}
           <motion.div variants={item} className="flex justify-center">
             <motion.div
-              className="relative w-32 h-32 md:w-40 md:h-40 cursor-pointer"
+              className="relative w-32 h-32 md:w-36 md:h-36 xl:w-40 xl:h-40 cursor-pointer"
               animate={showSmile ? {
                 rotate: [0, -3, 3, -3, 3, 0],
               } : {}}
@@ -180,7 +183,7 @@ export default function Hero() {
           {/* Name */}
           <motion.h1
             variants={item}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-ink dark:text-primary-50"
+            className="text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-ink dark:text-primary-50"
           >
             Hi, I'm{' '}
             <span className="heading-gradient">Hafiz</span>
@@ -215,7 +218,7 @@ export default function Hero() {
                 onClick={() => navigateTo(navItem.page)}
                 className="group flex flex-col items-center w-full text-center"
               >
-                <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink-soft/50 dark:text-primary-300/50 transition-all duration-300 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:translate-x-2 group-hover:scale-105">
+                <span className="text-4xl lg:text-5xl xl:text-6xl font-bold text-ink-soft/50 dark:text-primary-300/50 transition-all duration-300 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:translate-x-2 group-hover:scale-105">
                   {navItem.label}
                 </span>
                 <span className="text-xs md:text-sm text-ink-muted dark:text-primary-400 mt-1 transition-all duration-300 group-hover:text-ink-soft dark:group-hover:text-primary-300">
@@ -226,7 +229,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Download Resume */}
-          <motion.div variants={item} className="pt-4">
+          <motion.div variants={item} className="pt-2 xl:pt-4">
             <a
               href="/resume.pdf"
               download
