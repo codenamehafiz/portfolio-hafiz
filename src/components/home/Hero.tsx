@@ -103,12 +103,12 @@ export default function Hero() {
           variants={container}
           initial="hidden"
           animate={slideComplete ? 'show' : 'hidden'}
-          className="max-w-4xl mx-auto text-center space-y-6 xl:space-y-8 pb-8 xl:pb-16"
+          className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 pb-8 xl:pb-12"
         >
           {/* Profile Icon */}
           <motion.div variants={item} className="flex justify-center">
             <motion.div
-              className="relative w-32 h-32 md:w-36 md:h-36 xl:w-40 xl:h-40 cursor-pointer"
+              className="relative w-28 h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 cursor-pointer mx-auto"
               animate={showSmile ? {
                 rotate: [0, -3, 3, -3, 3, 0],
               } : {}}
@@ -172,9 +172,8 @@ export default function Hero() {
               <Image
                 src={showSmile ? "/images/avatar-smile.png" : "/images/avatar.png"}
                 alt="Profile"
-                width={160}
-                height={160}
-                className="object-cover rounded-full"
+                fill
+                className="object-cover rounded-full p-1"
                 priority
               />
             </motion.div>
@@ -183,7 +182,7 @@ export default function Hero() {
           {/* Name */}
           <motion.h1
             variants={item}
-            className="text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-ink dark:text-primary-50"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink dark:text-primary-50 leading-tight"
           >
             Hi, I'm{' '}
             <span className="heading-gradient">Hafiz</span>
@@ -192,7 +191,7 @@ export default function Hero() {
           {/* Tagline */}
           <motion.p
             variants={item}
-            className="text-xl md:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto"
+            className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto"
           >
             A Full Stack Developer from{' '}
             <span className="text-ink dark:text-primary-100 font-semibold">
@@ -203,7 +202,7 @@ export default function Hero() {
           {/* Description */}
           <motion.p
             variants={item}
-            className="text-base md:text-lg text-ink-soft dark:text-primary-300 max-w-2xl mx-auto"
+            className="text-sm md:text-base lg:text-lg text-ink-soft dark:text-primary-300 max-w-2xl mx-auto leading-relaxed"
           >
             End-to-end developer with over <span className="text-ink dark:text-primary-100 font-semibold">10 years of experience</span>,
             across frontend, backend, and server systems, with a strong focus on <u className="underline-offset-4">performance, reliability, and clean code</u>.
@@ -218,7 +217,7 @@ export default function Hero() {
                 onClick={() => navigateTo(navItem.page)}
                 className="group flex flex-col items-center w-full text-center"
               >
-                <span className="text-4xl lg:text-5xl xl:text-6xl font-bold text-ink-soft/50 dark:text-primary-300/50 transition-all duration-300 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:translate-x-2 group-hover:scale-105">
+                <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink-soft/50 dark:text-primary-300/50 transition-all duration-300 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:translate-x-2 group-hover:scale-105">
                   {navItem.label}
                 </span>
                 <span className="text-xs md:text-sm text-ink-muted dark:text-primary-400 mt-1 transition-all duration-300 group-hover:text-ink-soft dark:group-hover:text-primary-300">

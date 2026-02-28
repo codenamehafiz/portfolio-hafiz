@@ -218,19 +218,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             transition={{ delay: 0.55 }}
             className="mb-12 max-w-3xl mx-auto"
           >
-            {/* Main Preview with outside arrows */}
-            <div className="flex items-center gap-3">
-              {/* Left Arrow */}
-              {extraImages.length > 1 && (
-                <button
-                  onClick={() => setActiveIndex((prev) => (prev === 0 ? extraImages.length - 1 : prev - 1))}
-                  className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-md border border-slate-200 dark:border-slate-700"
-                  aria-label="Previous image"
-                >
-                  <HiChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-                </button>
-              )}
-
+            {/* Main Preview with inside full-height arrows */}
+            <div className="relative group">
               <div className="flex-1 min-w-0">
                 <motion.div
                   className="relative card overflow-hidden cursor-zoom-in"
@@ -261,6 +250,36 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                       />
                     </motion.div>
                   </AnimatePresence>
+
+                  {/* Left Arrow (Full Height Overlay) */}
+                  {extraImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveIndex((prev) => (prev === 0 ? extraImages.length - 1 : prev - 1));
+                      }}
+                      className="absolute left-0 top-0 bottom-0 w-16 md:w-32 flex items-center justify-start pl-2 md:pl-6 group/btn z-10 cursor-pointer"
+                      aria-label="Previous image"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      <HiChevronLeft className="relative w-8 h-8 md:w-12 md:h-12 text-white drop-shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover/btn:-translate-x-1 group-hover/btn:scale-110" />
+                    </button>
+                  )}
+
+                  {/* Right Arrow (Full Height Overlay) */}
+                  {extraImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveIndex((prev) => (prev + 1) % extraImages.length);
+                      }}
+                      className="absolute right-0 top-0 bottom-0 w-16 md:w-32 flex items-center justify-end pr-2 md:pr-6 group/btn z-10 cursor-pointer"
+                      aria-label="Next image"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-l from-white/40 via-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      <HiChevronRight className="relative w-8 h-8 md:w-12 md:h-12 text-white drop-shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover/btn:translate-x-1 group-hover/btn:scale-110" />
+                    </button>
+                  )}
                 </motion.div>
 
                 {/* Thumbnail Strip — aligned with image */}
@@ -270,11 +289,10 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                       <button
                         key={index}
                         onClick={() => setActiveIndex(index)}
-                        className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                          index === activeIndex
-                            ? 'border-primary-600 dark:border-primary-400 ring-2 ring-primary-600/30 dark:ring-primary-400/30'
-                            : 'border-transparent opacity-60 hover:opacity-100'
-                        }`}
+                        className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${index === activeIndex
+                          ? 'border-primary-600 dark:border-primary-400 ring-2 ring-primary-600/30 dark:ring-primary-400/30'
+                          : 'border-transparent opacity-60 hover:opacity-100'
+                          }`}
                       >
                         <Image
                           src={img}
@@ -288,17 +306,6 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   </div>
                 )}
               </div>
-
-              {/* Right Arrow */}
-              {extraImages.length > 1 && (
-                <button
-                  onClick={() => setActiveIndex((prev) => (prev + 1) % extraImages.length)}
-                  className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-md border border-slate-200 dark:border-slate-700"
-                  aria-label="Next image"
-                >
-                  <HiChevronRight className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-                </button>
-              )}
             </div>
           </motion.div>
         )}
