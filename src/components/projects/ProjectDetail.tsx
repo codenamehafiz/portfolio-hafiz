@@ -36,7 +36,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
     };
   }, [lightboxIndex, extraImages.length, closeLightbox]);
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-12 md:pt-24 pb-16">
       <div className="container-custom">
         {/* Back Button */}
         <motion.div

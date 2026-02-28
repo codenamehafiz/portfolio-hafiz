@@ -87,7 +87,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden pt-20 md:pt-8 xl:pt-16">
+    <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden md:pt-8 xl:pt-16">
       {/* Particle Background */}
       <ParticleBackground />
 
@@ -182,7 +182,7 @@ export default function Hero() {
           {/* Name */}
           <motion.h1
             variants={item}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink dark:text-primary-50 leading-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink dark:text-primary-50 leading-tight !mt-2 md:!mt-3 lg:!mt-4"
           >
             Hi, I'm{' '}
             <span className="heading-gradient">Hafiz</span>
@@ -191,7 +191,7 @@ export default function Hero() {
           {/* Tagline */}
           <motion.p
             variants={item}
-            className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto"
+            className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto !mt-2 md:!mt-3 lg:!mt-4"
           >
             A Full Stack Developer from{' '}
             <span className="text-ink dark:text-primary-100 font-semibold">

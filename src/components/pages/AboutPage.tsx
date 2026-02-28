@@ -15,7 +15,7 @@ export default function AboutPage() {
   return (
     <div className="w-full">
       {/* Page Header */}
-      <div className="pt-24 pb-1">
+      <div className="pt-12 md:pt-24 pb-1">
         <div className="container-custom max-w-4xl">
           <motion.p
             initial={{ opacity: 0, y: 10 }}

@@ -95,7 +95,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="pt-24 pb-16 md:pb-24 relative">
+    <section id="contact" className="pt-12 md:pt-24 pb-16 md:pb-24 relative">
 
       {/* Dot pattern background */}
       <div

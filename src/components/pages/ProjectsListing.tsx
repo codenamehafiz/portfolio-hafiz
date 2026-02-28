@@ -52,7 +52,7 @@ export default function ProjectsListing() {
   };
 
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-12 md:pt-24 pb-16">
       <div className="container-custom">
         {/* Header */}
         <motion.div
@@ -120,11 +120,10 @@ export default function ProjectsListing() {
                   <button
                     key={tech}
                     onClick={() => toggleTech(tech)}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                      isSelected
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${isSelected
                         ? 'bg-primary-600 text-white shadow-md'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                    }`}
+                      }`}
                   >
                     {tech}
                     <span className="ml-1 sm:ml-2 text-xs opacity-75">({projectCountByTech.get(tech) ?? 0})</span>
