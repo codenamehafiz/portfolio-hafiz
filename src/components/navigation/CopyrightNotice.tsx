@@ -10,7 +10,7 @@ export default function CopyrightNotice() {
   const { currentPage } = useNavigation();
 
   return (
-    <div className="hidden md:flex items-end justify-between py-4 px-4">
+    <div className="hidden md:flex items-end justify-between py-4 px-4 relative z-10">
       <div />
       <div className="flex items-center gap-4">
         <SunMoonToggle isDark={theme === 'dark'} onClick={toggleTheme} />

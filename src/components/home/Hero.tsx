@@ -5,7 +5,6 @@ import { HiDownload } from 'react-icons/hi';
 import Image from 'next/image';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigation, type Page } from '@/context/NavigationContext';
-import ParticleBackground from '@/components/effects/ParticleBackground';
 
 const container = {
   hidden: { opacity: 0 },
@@ -88,15 +87,6 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden md:pt-8 xl:pt-16">
-      {/* Particle Background */}
-      <ParticleBackground />
-
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-400/12 dark:bg-accent-600/18 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-400/12 dark:bg-primary-600/18 rounded-full blur-3xl animate-float" style={floatDelay2s} />
-        <div className="absolute inset-0 m-auto w-[600px] h-[600px] bg-accent-300/8 dark:bg-accent-700/15 rounded-full blur-3xl animate-float" style={floatDelay4s} />
-      </div>
 
       <div className="container-custom">
         <motion.div
