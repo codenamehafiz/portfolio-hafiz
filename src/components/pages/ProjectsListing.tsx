@@ -78,18 +78,18 @@ export default function ProjectsListing() {
         >
           {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto">
-            <HiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <HiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 z-10 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search projects by name, description, or tag..."
-              className="input-field pl-12 pr-12"
+              className="input-field pl-12 pr-12 relative z-0"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 z-10"
               >
                 <HiX className="w-5 h-5" />
               </button>
@@ -121,8 +121,8 @@ export default function ProjectsListing() {
                     key={tech}
                     onClick={() => toggleTech(tech)}
                     className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${isSelected
-                        ? 'bg-primary-600 text-white shadow-md'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-primary-600 text-white shadow-md'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
                   >
                     {tech}

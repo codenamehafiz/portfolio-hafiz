@@ -231,7 +231,4 @@ export const technologies = [
   'HTML5',
   'CSS3',
   'jQuery',
-  'Firebase',
-  'Git',
-  'Capacitor',
 ];

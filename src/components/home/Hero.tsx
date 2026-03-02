@@ -88,7 +88,7 @@ export default function Hero() {
   return (
     <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden md:pt-8 xl:pt-16">
 
-      <div className="container-custom">
+      <div className="container-custom -mt-24 md:mt-0">
         <motion.div
           variants={container}
           initial="hidden"

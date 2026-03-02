@@ -23,7 +23,7 @@ const slideTransition = {
 };
 
 function PageContent() {
-  const { currentPage, direction, isInitialLoad, setSlideComplete } = useNavigation();
+  const { currentPage, direction, isInitialLoad, setSlideComplete, scrollContainerRef } = useNavigation();
   const [layoutPage, setLayoutPage] = useState(currentPage);
 
   const handleSlideComplete = useCallback(() => {
@@ -55,7 +55,7 @@ function PageContent() {
         )}
       </AnimatePresence>
       <Navbar />
-      <div className="relative w-full flex-1 overflow-hidden overflow-y-auto z-10">
+      <div id="main-scroll-area" ref={scrollContainerRef} className="relative w-full flex-1 overflow-hidden overflow-y-auto z-10">
         <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setLayoutPage(currentPage)}>
           {currentPage === 'home' && (
             <motion.div

@@ -32,15 +32,21 @@ interface NavigationContextType {
   slideComplete: boolean;
   setSlideComplete: (value: boolean) => void;
   navigateTo: (page: Page) => void;
+  scrollYProgress: import("framer-motion").MotionValue<number>;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
 }
+
+import { useScroll } from 'framer-motion';
 
 const NavigationContext = createContext<NavigationContextType>({
   currentPage: 'home',
   direction: 1,
   isInitialLoad: true,
   slideComplete: true,
-  setSlideComplete: () => {},
-  navigateTo: () => {},
+  setSlideComplete: () => { },
+  navigateTo: () => { },
+  scrollYProgress: { current: 0 } as any,
+  scrollContainerRef: { current: null },
 });
 
 export function useNavigation() {
@@ -54,6 +60,10 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const [isReady, setIsReady] = useState(false);
   const [slideComplete, setSlideComplete] = useState(true);
   const isInitialized = useRef(false);
+
+  // Scroll Tracking Setup
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ container: scrollContainerRef });
 
   // Read pathname on mount to determine initial page
   useEffect(() => {
@@ -98,8 +108,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const value = useMemo(() => ({
-    currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo,
-  }), [currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo]);
+    currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo, scrollYProgress, scrollContainerRef
+  }), [currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo, scrollYProgress, scrollContainerRef]);
 
   if (!isReady) return null;
 

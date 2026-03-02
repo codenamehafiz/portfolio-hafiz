@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { SiGithub, SiLinkedin, SiWhatsapp } from 'react-icons/si';
 import { useTheme } from '@/providers/theme-provider';
 import { useNavigation, type Page } from '@/context/NavigationContext';
@@ -17,7 +18,10 @@ const subPageLinks = navLinks.filter((l) => l.page !== 'home');
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { currentPage, navigateTo } = useNavigation();
+  const { currentPage, navigateTo, scrollYProgress } = useNavigation();
+
+  // Transform scroll progress (0 to 1) into a pixel or percentage height
+  const scrollHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <>
@@ -64,7 +68,12 @@ export default function Navbar() {
               <SiWhatsapp className="w-5 h-5" />
             </motion.a>
 
-            <div className="w-px h-16 group-hover:h-24 bg-ink-soft/70 dark:bg-primary-300/70 group-hover:bg-ink dark:group-hover:bg-primary-100 transition-all duration-300" />
+            <div className="w-[2px] h-24 bg-ink-soft/20 dark:bg-primary-300/20 relative rounded-full overflow-hidden transition-all duration-300 mt-2">
+              <motion.div
+                className="absolute top-0 left-0 w-full bg-primary-500 dark:bg-accent drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]"
+                style={{ height: scrollHeight }}
+              />
+            </div>
           </div>
         </nav>
       )}
@@ -89,7 +98,12 @@ export default function Navbar() {
                 Home
               </span>
             </button>
-            <div className="w-px h-16 group-hover:h-24 bg-ink-soft/70 dark:bg-primary-300/70 group-hover:bg-ink dark:group-hover:bg-primary-100 transition-all duration-300" />
+            <div className="w-[2px] h-24 bg-ink-soft/20 dark:bg-primary-300/20 relative rounded-full overflow-hidden mt-2">
+              <motion.div
+                className="absolute top-0 left-0 w-full bg-primary-500 dark:bg-accent drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]"
+                style={{ height: scrollHeight }}
+              />
+            </div>
           </div>
 
           {/* Bottom: Page links */}
@@ -115,11 +129,10 @@ export default function Navbar() {
                   )}
 
                   <span
-                    className={`text-xs uppercase tracking-widest transition-all duration-200 rotate-180 select-none py-2 px-1 rounded ${
-                      isActive
-                        ? 'font-semibold text-ink dark:text-primary-100'
-                        : 'font-normal text-ink-soft/70 dark:text-primary-300/70 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:bg-ink/5 dark:group-hover:bg-primary-100/10'
-                    }`}
+                    className={`text-xs uppercase tracking-widest transition-all duration-200 rotate-180 select-none py-2 px-1 rounded ${isActive
+                      ? 'font-semibold text-ink dark:text-primary-100'
+                      : 'font-normal text-ink-soft/70 dark:text-primary-300/70 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:bg-ink/5 dark:group-hover:bg-primary-100/10'
+                      }`}
                   >
                     {link.name}
                   </span>
@@ -201,11 +214,10 @@ export default function Navbar() {
                 )}
 
                 <span
-                  className={`text-[10px] uppercase tracking-wide transition-all duration-200 select-none ${
-                    isActive
-                      ? 'font-semibold text-ink dark:text-primary-100'
-                      : 'font-normal text-ink-soft/50 dark:text-primary-300/50'
-                  }`}
+                  className={`text-[10px] uppercase tracking-wide transition-all duration-200 select-none ${isActive
+                    ? 'font-semibold text-ink dark:text-primary-100'
+                    : 'font-normal text-ink-soft/50 dark:text-primary-300/50'
+                    }`}
                 >
                   {link.name}
                 </span>
