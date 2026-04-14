@@ -86,7 +86,7 @@ export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) 
                 ? { pathLength: 1, opacity: 0.16 }
                 : {
                     pathLength: [0, 1],
-                    opacity: [0, 0.6, 0.6, 0],
+                    opacity: [0, 0.3, 0.3, 0],
                   }
             }
             transition={

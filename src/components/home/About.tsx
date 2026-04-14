@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import { useNavigation } from '@/context/NavigationContext';
@@ -10,12 +10,14 @@ export default function About() {
   const imageRef = useRef<HTMLDivElement>(null);
   const inView = useInView(imageRef, { once: true, margin: '-100px' });
   const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const textY = useTransform(scrollYProgress, [0, 1], [30, -50]);
+  // #8 — disable parallax when reduced motion preferred
+  const imageY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [100, -100]);
+  const textY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [30, -50]);
 
   const ready = slideComplete && inView;
 

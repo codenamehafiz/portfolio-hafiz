@@ -50,7 +50,7 @@ function PageContent() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 z-0 pointer-events-none"
           >
-            <BackgroundBeams className="opacity-80 dark:opacity-80 transition-opacity duration-1000" />
+            <BackgroundBeams className="opacity-30 dark:opacity-30 transition-opacity duration-1000" />
           </motion.div>
         )}
       </AnimatePresence>

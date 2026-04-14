@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +11,9 @@ import ProjectTechStack from '@/components/projects/ProjectTechStack';
 
 export default function FeaturedProjects() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const prefersReducedMotion = useReducedMotion();
+  // #7 — once: false so items re-animate when scrolled back into view
+  const isInView = useInView(ref, { once: false, margin: '-100px' });
 
   return (
     <section id="projects" className="section-padding relative">
@@ -20,14 +22,14 @@ export default function FeaturedProjects() {
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
           className="space-y-16"
         >
           {/* Section Header */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: prefersReducedMotion ? 0 : 0.2 }}
             className="text-3xl md:text-4xl font-bold text-ink dark:text-primary-50"
           >
             Projects
@@ -40,7 +42,7 @@ export default function FeaturedProjects() {
                 key={project.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
+                transition={{ delay: prefersReducedMotion ? 0 : 0.3 + index * 0.1 }}
                 className="group"
               >
                 <div className="grid md:grid-cols-2 gap-8 items-center">

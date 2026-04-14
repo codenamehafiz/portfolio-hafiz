@@ -20,6 +20,24 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
   const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
   const imageRef = useRef<HTMLImageElement>(null);
 
+  // #5 — drag-to-scroll thumbnail strip
+  const stripContainerRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (stripContainerRef.current && stripRef.current) {
+        const containerWidth = stripContainerRef.current.offsetWidth;
+        const contentWidth = stripRef.current.scrollWidth;
+        setDragConstraints({ left: Math.min(0, containerWidth - contentWidth), right: 0 });
+      }
+    };
+    updateConstraints();
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, [extraImages.length]);
+
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
   useEffect(() => {
@@ -283,27 +301,37 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   )}
                 </motion.div>
 
-                {/* Thumbnail Strip — aligned with image */}
+                {/* Thumbnail Strip — drag to scroll */}
                 {extraImages.length > 1 && (
-                  <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-                    {extraImages.map((img, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setActiveIndex(index)}
-                        className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${index === activeIndex
-                          ? 'border-primary-600 dark:border-primary-400 ring-2 ring-primary-600/30 dark:ring-primary-400/30'
-                          : 'border-transparent opacity-60 hover:opacity-100'
-                          }`}
-                      >
-                        <Image
-                          src={img}
-                          alt={`Thumbnail ${index + 1}`}
-                          fill
-                          sizes="80px"
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
+                  <div ref={stripContainerRef} className="overflow-hidden mt-3">
+                    <motion.div
+                      ref={stripRef}
+                      drag="x"
+                      dragConstraints={dragConstraints}
+                      dragElastic={0.05}
+                      dragMomentum
+                      className="flex gap-2 pb-1 cursor-grab active:cursor-grabbing select-none"
+                    >
+                      {extraImages.map((img, index) => (
+                        <motion.button
+                          key={index}
+                          onClick={() => setActiveIndex(index)}
+                          whileTap={{ scale: 0.95 }}
+                          className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${index === activeIndex
+                            ? 'border-primary-600 dark:border-primary-400 ring-2 ring-primary-600/30 dark:ring-primary-400/30'
+                            : 'border-transparent opacity-60 hover:opacity-100'
+                            }`}
+                        >
+                          <Image
+                            src={img}
+                            alt={`Thumbnail ${index + 1}`}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
+                        </motion.button>
+                      ))}
+                    </motion.div>
                   </div>
                 )}
               </div>

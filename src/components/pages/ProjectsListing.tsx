@@ -1,16 +1,155 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useMotionTemplate, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { HiSearch, HiX, HiArrowRight } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { HiExternalLink } from 'react-icons/hi';
 import { projects, technologies } from '@/data/projects';
+import type { Project } from '@/data/projects';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import ProjectTechStack from '@/components/projects/ProjectTechStack';
 import { useNavigation } from '@/context/NavigationContext';
+
+// #4 — cursor spotlight card extracted so hooks can be called per card
+function ProjectCard({ project, index, slideComplete }: {
+  project: Project;
+  index: number;
+  slideComplete: boolean;
+}) {
+  const prefersReducedMotion = useReducedMotion();
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  }
+
+  // #4 — radial gradient that follows the cursor
+  const spotlight = useMotionTemplate`radial-gradient(250px circle at ${mouseX}px ${mouseY}px, rgba(120, 119, 198, 0.08), transparent 80%)`;
+
+  return (
+    <motion.div
+      layout
+      className="relative z-0 hover:z-20"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      // #8 — skip delays/durations when reduced motion preferred
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.2,
+        delay: slideComplete && !prefersReducedMotion ? 0.06 * index : 0,
+      }}
+      onMouseMove={prefersReducedMotion ? undefined : handleMouseMove}
+    >
+      <div className="card card-hover h-full group relative">
+        {/* #4 — spotlight overlay */}
+        {!prefersReducedMotion && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 rounded-xl z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ background: spotlight }}
+          />
+        )}
+
+        {/* Image */}
+        <Link href={`/projects/${project.id}`} className="block">
+          <div className="relative h-48 overflow-hidden cursor-pointer">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <span className="text-white font-medium text-sm bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                View Details
+              </span>
+            </div>
+            {project.featured && (
+              <div className="absolute top-4 right-4">
+                <span className="px-3 py-1 bg-accent-500 text-white text-xs font-bold rounded-full shadow-lg">
+                  Featured
+                </span>
+              </div>
+            )}
+          </div>
+        </Link>
+
+        {/* Content */}
+        <div className="p-6 space-y-4 relative z-20">
+          <div>
+            <div className="flex items-start justify-between mb-2">
+              <Link href={`/projects/${project.id}`}>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer">
+                  {project.title}
+                </h3>
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-1 text-xs font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3">
+              {project.description}
+            </p>
+          </div>
+
+          <ProjectTechStack
+            technologies={project.technologies}
+            className="gap-2"
+            itemClassName="px-2 py-1 text-xs rounded"
+            maxItems={3}
+          />
+
+          <div className="flex items-center space-x-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 btn-secondary text-center py-2"
+                aria-label="View GitHub repository"
+              >
+                <FaGithub className="w-4 h-4 inline mr-2" />
+                Code
+              </a>
+            )}
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 btn-primary text-center py-2"
+                aria-label="View live demo"
+              >
+                <HiExternalLink className="w-4 h-4 inline mr-2" />
+                Demo
+              </a>
+            )}
+            <Link
+              href={`/projects/${project.id}`}
+              className="flex-1 btn-secondary text-center py-2 inline-flex items-center justify-center gap-1 group/details"
+            >
+              Details
+              <HiArrowRight className="w-4 h-4 transition-transform group-hover/details:translate-x-1" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function ProjectsListing() {
   const { slideComplete } = useNavigation();
@@ -153,121 +292,23 @@ export default function ProjectsListing() {
         {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
           <motion.div
+            layout
             initial={{ opacity: 0 }}
             animate={slideComplete ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                className="relative z-0 hover:z-20"
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={slideComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.35, delay: 0.08 * index }}
-              >
-                <div className="card card-hover h-full group">
-                  {/* Image */}
-                  <Link href={`/projects/${project.id}`} className="block">
-                    <div className="relative h-48 overflow-hidden cursor-pointer">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <span className="text-white font-medium text-sm bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                          View Details
-                        </span>
-                      </div>
-
-                      {/* Featured Badge */}
-                      {project.featured && (
-                        <div className="absolute top-4 right-4">
-                          <span className="px-3 py-1 bg-accent-500 text-white text-xs font-bold rounded-full shadow-lg">
-                            Featured
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Content */}
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <div className="flex items-start justify-between mb-2">
-                        <Link href={`/projects/${project.id}`}>
-                          <h3 className="text-xl font-bold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer">
-                            {project.title}
-                          </h3>
-                        </Link>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 text-xs font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    {/* Technologies */}
-                    <ProjectTechStack
-                      technologies={project.technologies}
-                      className="gap-2"
-                      itemClassName="px-2 py-1 text-xs rounded"
-                      maxItems={3}
-                    />
-
-                    {/* Links */}
-                    <div className="flex items-center space-x-2 pt-4 border-t border-slate-200 dark:border-slate-700">
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 btn-secondary text-center py-2"
-                          aria-label="View GitHub repository"
-                        >
-                          <FaGithub className="w-4 h-4 inline mr-2" />
-                          Code
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 btn-primary text-center py-2"
-                          aria-label="View live demo"
-                        >
-                          <HiExternalLink className="w-4 h-4 inline mr-2" />
-                          Demo
-                        </a>
-                      )}
-                      <Link
-                        href={`/projects/${project.id}`}
-                        className="flex-1 btn-secondary text-center py-2 inline-flex items-center justify-center gap-1 group/details"
-                      >
-                        Details
-                        <HiArrowRight className="w-4 h-4 transition-transform group-hover/details:translate-x-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            {/* #1 + #2 — layout animations + re-stagger on filter change */}
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  slideComplete={slideComplete}
+                />
+              ))}
+            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div
@@ -291,12 +332,3 @@ export default function ProjectsListing() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
