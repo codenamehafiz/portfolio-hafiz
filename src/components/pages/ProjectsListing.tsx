@@ -9,6 +9,7 @@ import { FaGithub } from 'react-icons/fa';
 import { HiExternalLink } from 'react-icons/hi';
 import { projects, technologies } from '@/data/projects';
 import ScrollToTop from '@/components/ui/ScrollToTop';
+import ProjectTechStack from '@/components/projects/ProjectTechStack';
 import { useNavigation } from '@/context/NavigationContext';
 
 export default function ProjectsListing() {
@@ -159,12 +160,13 @@ export default function ProjectsListing() {
           >
             {filteredProjects.map((project, index) => (
               <motion.div
+                className="relative z-0 hover:z-20"
                 key={project.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={slideComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.35, delay: 0.08 * index }}
               >
-                <div className="card card-hover h-full overflow-hidden group">
+                <div className="card card-hover h-full group">
                   {/* Image */}
                   <Link href={`/projects/${project.id}`} className="block">
                     <div className="relative h-48 overflow-hidden cursor-pointer">
@@ -221,21 +223,12 @@ export default function ProjectsListing() {
                     </div>
 
                     {/* Technologies */}
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.slice(0, 4).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.technologies.length > 4 && (
-                        <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">
-                          +{project.technologies.length - 4}
-                        </span>
-                      )}
-                    </div>
+                    <ProjectTechStack
+                      technologies={project.technologies}
+                      className="gap-2"
+                      itemClassName="px-2 py-1 text-xs rounded"
+                      maxItems={3}
+                    />
 
                     {/* Links */}
                     <div className="flex items-center space-x-2 pt-4 border-t border-slate-200 dark:border-slate-700">
@@ -298,3 +291,12 @@ export default function ProjectsListing() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+

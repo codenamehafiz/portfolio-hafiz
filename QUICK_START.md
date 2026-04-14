@@ -148,7 +148,7 @@ const contactInfo = [
 
 ### Step 8: Add Your Resume (1 minute)
 
-Replace `public/resume.pdf` with your actual resume PDF file.
+Replace `public/resume-hafiz-idris.pdf` with your actual resume PDF file.
 
 ### Step 9: Test Everything (3 minutes)
 
@@ -329,3 +329,4 @@ Spread this over a few days for best results!
 Now go show the world what you can do!
 
 Questions? Check [README.md](README.md) or [CUSTOMIZATION.md](CUSTOMIZATION.md)
+

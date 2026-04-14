@@ -354,7 +354,7 @@ export default function Experience() {
             className="flex justify-center"
           >
             <a
-              href="/resume.pdf"
+              href="/resume-hafiz-idris.pdf"
               download
               className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-lg border border-ink-soft/20 dark:border-primary-300/20 text-ink-soft dark:text-primary-300 hover:text-ink dark:hover:text-primary-100 hover:border-ink-soft/40 dark:hover:border-primary-300/40 transition-colors"
             >
@@ -369,3 +369,4 @@ export default function Experience() {
     </section>
   );
 }
+

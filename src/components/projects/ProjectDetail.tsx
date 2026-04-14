@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { HiArrowLeft, HiExternalLink, HiChevronLeft, HiChevronRight, HiX } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { Project } from '@/data/projects';
+import ProjectTechStack from '@/components/projects/ProjectTechStack';
 
 interface ProjectDetailProps {
   project: Project;
@@ -389,19 +390,17 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6">
             Technologies Used
           </h2>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
-            {project.technologies.map((tech) => (
-              <span
-                key={tech}
-                className="px-4 py-2 text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-lg"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
+          <ProjectTechStack
+            technologies={project.technologies}
+            className="gap-2 sm:gap-3"
+            itemClassName="px-4 py-2 text-sm"
+            showOverflowCount={false}
+          />
         </motion.div>
 
       </div>
     </div>
   );
 }
+
+

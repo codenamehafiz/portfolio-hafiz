@@ -135,7 +135,7 @@ Update social links (lines ~7-12).
 
 ### 6. Resume (2 minutes)
 
-Replace `public/resume.pdf` with your actual resume file.
+Replace `public/resume-hafiz-idris.pdf` with your actual resume file.
 
 ### 7. Colors & Theme (Optional, 15 minutes)
 
@@ -322,3 +322,4 @@ Before deploying:
 ---
 
 Remember: Your portfolio should reflect **you**. Don't be afraid to customize beyond these suggestions to make it truly unique!
+

@@ -193,14 +193,14 @@ colors: {
 
 ### 7. Resume
 
-Replace `public/resume.pdf` with your actual resume file.
+Replace `public/resume-hafiz-idris.pdf` with your actual resume file.
 
 ## Project Structure
 
 ```
 portfolio/
 ├── public/
-│   └── resume.pdf              # Your resume PDF
+│   └── resume-hafiz-idris.pdf              # Your resume PDF
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout with metadata
@@ -415,3 +415,4 @@ If you have any questions or run into issues, please:
 ---
 
 Happy coding! If you use this template, I'd love to see what you build. Feel free to share! 🚀
+

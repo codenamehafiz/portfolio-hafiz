@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { HiExternalLink, HiArrowRight } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { projects } from '@/data/projects';
+import ProjectTechStack from '@/components/projects/ProjectTechStack';
 
 export default function FeaturedProjects() {
   const ref = useRef(null);
@@ -71,16 +72,13 @@ export default function FeaturedProjects() {
                     </p>
 
                     {/* Technologies */}
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-accent-900/40 text-ink-soft dark:text-primary-300 rounded-full"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
+                    <ProjectTechStack
+                      technologies={project.technologies}
+                      className="gap-2"
+                      itemClassName="px-3 py-1 text-xs bg-primary-100 dark:bg-accent-900/40 text-ink-soft dark:text-primary-300 rounded-full"
+                      maxItems={3}
+                      overflowClassName="rounded-full"
+                    />
 
                     {/* Links */}
                     <div className="flex items-center gap-4 pt-2">
@@ -135,3 +133,7 @@ export default function FeaturedProjects() {
     </section>
   );
 }
+
+
+
+

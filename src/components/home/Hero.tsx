@@ -220,7 +220,7 @@ export default function Hero() {
           {/* Download Resume */}
           <motion.div variants={item} className="pt-2 xl:pt-4">
             <a
-              href="/resume.pdf"
+              href="/resume-hafiz-idris.pdf"
               download
               className="inline-flex items-center text-sm text-ink-soft/60 dark:text-primary-300/60 hover:text-ink dark:hover:text-primary-100 transition-colors"
             >
@@ -233,3 +233,4 @@ export default function Hero() {
     </section>
   );
 }
+

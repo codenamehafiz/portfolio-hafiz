@@ -57,7 +57,6 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [direction, setDirection] = useState(1);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [isReady, setIsReady] = useState(false);
   const [slideComplete, setSlideComplete] = useState(true);
   const isInitialized = useRef(false);
 
@@ -76,7 +75,6 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
     // Replace current history entry so back works correctly
     window.history.replaceState({ page }, '', PAGE_TO_PATH[page]);
-    setIsReady(true);
   }, []);
 
   // Listen for browser back/forward
@@ -111,7 +109,6 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo, scrollYProgress, scrollContainerRef
   }), [currentPage, direction, isInitialLoad, slideComplete, setSlideComplete, navigateTo, scrollYProgress, scrollContainerRef]);
 
-  if (!isReady) return null;
 
   return (
     <NavigationContext.Provider value={value}>

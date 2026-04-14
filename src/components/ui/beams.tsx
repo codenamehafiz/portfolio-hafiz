@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-import React from "react"
+import { motion, useReducedMotion } from "framer-motion"
+import React, { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 export interface BackgroundBeamsProps {
@@ -31,14 +31,33 @@ const pathData = [
   "M38 -645C38 -645 106 -240 570 -113C1034 14 1102 419 1102 419",
 ]
 
-// Pre-calculated animation values for each path
 const animations = pathData.map((_, i) => ({
   duration: 4 + (i % 5) * 0.8,
   delay: i * 0.15,
-  initialProgress: (i * 5) % 100,
 }))
 
 export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) => {
+  const prefersReducedMotion = useReducedMotion()
+  const [isCompactViewport, setIsCompactViewport] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)")
+    const updateViewport = () => setIsCompactViewport(mediaQuery.matches)
+
+    updateViewport()
+    mediaQuery.addEventListener("change", updateViewport)
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewport)
+    }
+  }, [])
+
+  const visiblePaths = prefersReducedMotion
+    ? pathData.slice(0, 6)
+    : isCompactViewport
+      ? pathData.slice(0, 10)
+      : pathData
+
   return (
     <div className={cn("pointer-events-none absolute inset-0 h-full w-full", className)}>
       <svg
@@ -48,37 +67,43 @@ export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) 
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid slice"
       >
-        {/* Static faint paths for depth */}
         <g className="stroke-ink/10 dark:stroke-white/10" opacity="0.1">
-          {pathData.map((d, i) => (
+          {visiblePaths.map((d, i) => (
             <path key={`static-${i}`} d={d} strokeWidth="0.5" />
           ))}
         </g>
 
-        {/* Animated gradient beams */}
-        {pathData.map((d, i) => (
+        {visiblePaths.map((d, i) => (
           <motion.path
             key={`beam-${i}`}
             d={d}
             stroke={`url(#gradient-${i})`}
             strokeWidth="1"
             strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{
-              pathLength: [0, 1],
-              opacity: [0, 0.6, 0.6, 0],
-            }}
-            transition={{
-              duration: animations[i].duration,
-              delay: animations[i].delay,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
+            initial={prefersReducedMotion ? { pathLength: 1, opacity: 0.16 } : { pathLength: 0, opacity: 0 }}
+            animate={
+              prefersReducedMotion
+                ? { pathLength: 1, opacity: 0.16 }
+                : {
+                    pathLength: [0, 1],
+                    opacity: [0, 0.6, 0.6, 0],
+                  }
+            }
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    duration: animations[i].duration,
+                    delay: animations[i].delay,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }
+            }
           />
         ))}
 
         <defs>
-          {pathData.map((_, i) => (
+          {visiblePaths.map((_, i) => (
             <linearGradient
               key={`gradient-${i}`}
               id={`gradient-${i}`}
