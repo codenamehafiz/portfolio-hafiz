@@ -14,7 +14,7 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project }: ProjectDetailProps) {
-  const extraImages = project.images.slice(1);
+  const extraImages = project.images;
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
