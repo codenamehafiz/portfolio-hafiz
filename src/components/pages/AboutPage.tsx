@@ -5,7 +5,7 @@ import About from '@/components/home/About';
 import Experience from '@/components/home/Experience';
 import Skills from '@/components/home/Skills';
 import SquigglyDivider from '@/components/ui/SquigglyDivider';
-import TypingTerminal from '@/components/ui/TypingTerminal';
+import WorkflowBento from '@/components/ui/WorkflowBento';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import { useNavigation } from '@/context/NavigationContext';
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
 
       <About />
 
-      <TypingTerminal />
+      <WorkflowBento />
 
       <Experience />
 

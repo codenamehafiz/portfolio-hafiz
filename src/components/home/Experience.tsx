@@ -132,38 +132,42 @@ export default function Experience() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="space-y-10"
         >
-          {/* Section Header */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="text-3xl md:text-4xl font-bold text-ink dark:text-primary-50"
-          >
-            Experience
-          </motion.h2>
-
-          {/* Experience Summary */}
+          {/* Section Header & Summary */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="space-y-6"
+            transition={{ delay: 0.7 }}
+            className="space-y-8"
           >
-            <p className="text-base md:text-lg text-ink-soft dark:text-primary-300 leading-relaxed">
-              I&apos;ve been shipping code for over 10 years — starting from front-end, growing into back-end, and now doing it all as a full-stack engineer.
-            </p>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-ink dark:text-primary-50 mb-2">
+                Experience
+              </h2>
+              <p className="text-base md:text-lg text-ink-soft dark:text-primary-300 leading-relaxed">
+                I&apos;ve been shipping code for over 10 years — starting from front-end, growing into back-end, and now doing it all as a full-stack engineer.
+              </p>
+            </div>
 
             <div className="space-y-1">
               <p className="text-sm font-semibold uppercase tracking-widest text-ink-muted dark:text-primary-400 mb-3">
                 Within those 10 years
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 pt-2">
                 {yearsSummary.map(({ years, area }, i) => (
-                  <div key={area} className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-ink dark:text-primary-50 tabular-nums">
-                      <AnimatedNumber value={years} delay={i * 0.1} />
-                    </span>
-                    <span className="text-sm text-ink-soft dark:text-primary-300">years in {area}</span>
+                  <div key={area} className="relative flex items-center justify-between gap-2 overflow-hidden rounded-md group">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${(years / 10) * 100}%` }}
+                      viewport={{ once: true, margin: '-50px' }}
+                      transition={{ duration: 1.5, delay: i * 0.1, ease: 'easeOut' }}
+                      className="absolute left-0 bottom-0 top-0 bg-accent-500/10 dark:bg-accent-400/10 -z-10"
+                    />
+                    <div className="flex items-baseline gap-2 py-1.5 px-3">
+                      <span className="text-2xl font-bold text-ink dark:text-primary-50 tabular-nums">
+                        <AnimatedNumber value={years} delay={i * 0.1} />
+                      </span>
+                      <span className="text-sm text-ink-soft dark:text-primary-300">years in {area}</span>
+                    </div>
                   </div>
                 ))}
               </div>

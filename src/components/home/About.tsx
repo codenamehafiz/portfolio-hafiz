@@ -37,7 +37,7 @@ export default function About() {
             <motion.div
               ref={imageRef}
               style={{ y: imageY }}
-              className="relative float-right ml-4 mb-4 w-32 h-32 sm:w-40 sm:h-40 md:float-none md:ml-0 md:mb-0 md:w-[300px] md:h-[300px] md:absolute md:right-0 md:top-0 rounded-2xl overflow-hidden"
+              className="relative float-right ml-4 mb-4 w-32 h-32 sm:w-40 sm:h-40 md:float-none md:ml-0 md:mb-0 md:w-[250px] md:h-[250px] md:absolute md:right-0 md:top-0 rounded-2xl overflow-hidden"
             >
               {/* Photo fades in after outline draws */}
               <motion.div
@@ -47,7 +47,7 @@ export default function About() {
                 className="relative w-full h-full"
               >
                 <Image
-                  src="/images/me-about2.png"
+                  src="/images/me-about.png"
                   alt="Hafiz Idris"
                   fill
                   className="object-cover"
@@ -81,7 +81,7 @@ export default function About() {
             </motion.div>
 
             {/* Text Content */}
-            <motion.div style={{ y: textY }} className="md:pr-[332px] space-y-6">
+            <motion.div style={{ y: textY }} className="md:pr-[300px] space-y-6">
               {/* Professional Statement */}
               <motion.p
                 initial={{ opacity: 0, y: 20 }}

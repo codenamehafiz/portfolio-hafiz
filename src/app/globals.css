@@ -146,7 +146,7 @@
 
 @layer components {
   .container-custom {
-    @apply max-w-7xl mx-auto px-6;
+    @apply max-w-7xl mx-auto px-6 lg:px-0;
   }
 
   .section-padding {

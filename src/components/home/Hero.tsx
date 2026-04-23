@@ -26,6 +26,8 @@ const heroNavItems: { page: Page; label: string; subtitle: string }[] = [
 // Letters of the name — each animates in individually
 const HAFIZ_LETTERS = ['H', 'a', 'f', 'i', 'z'];
 
+let hasPlayedHeroAnimation = false;
+
 export default function Hero() {
   const [showSmile, setShowSmile] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
@@ -34,13 +36,18 @@ export default function Hero() {
   const { navigateTo, slideComplete, scrollContainerRef } = useNavigation();
 
   const prefersReducedMotion = useReducedMotion();
+  const [shouldAnimate] = useState(!hasPlayedHeroAnimation);
 
   // Scroll parallax — hero content drifts up as user scrolls
   const { scrollY } = useScroll({ container: scrollContainerRef });
   const heroY = useTransform(scrollY, [0, 400], [0, -60]);
 
   // Helper so every element has the same reduced-motion shortcut
-  const d = (delay: number) => prefersReducedMotion ? 0 : delay;
+  const d = (delay: number) => (prefersReducedMotion || !shouldAnimate) ? 0 : delay;
+
+  // Helpers to completely bypass animations on subsequent loads
+  const getInitial = (hiddenState: any) => shouldAnimate ? hiddenState : false;
+  const getAnimate = (hiddenState: any, visibleState: any) => shouldAnimate ? (show ? visibleState : hiddenState) : visibleState;
 
   const triggerAnimation = useCallback(() => {
     timersRef.current.forEach(timer => clearTimeout(timer));
@@ -55,12 +62,21 @@ export default function Hero() {
     timersRef.current.push(normalTimer);
   }, []);
 
-  useEffect(() => {
-    triggerAnimation();
-    return () => { timersRef.current.forEach(timer => clearTimeout(timer)); };
-  }, []);
-
   const show = slideComplete;
+
+  useEffect(() => {
+    if (show && shouldAnimate) {
+      hasPlayedHeroAnimation = true;
+      const timer = setTimeout(() => {
+        triggerAnimation();
+      }, prefersReducedMotion ? 0 : 2400); // Wait for avatar to fade in (1.8s delay + 0.5s duration)
+      
+      return () => {
+        clearTimeout(timer);
+        timersRef.current.forEach(t => clearTimeout(t));
+      };
+    }
+  }, [show, prefersReducedMotion, triggerAnimation, shouldAnimate]);
 
   return (
     <section id="home" className="relative flex-1 flex items-center justify-center overflow-hidden md:pt-8 xl:pt-16">
@@ -73,8 +89,8 @@ export default function Hero() {
           {/* ── Avatar ── */}
           <motion.div
             className="flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            initial={getInitial({ opacity: 0, y: 20 })}
+            animate={getAnimate({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(1.8) }}
           >
             <motion.div
@@ -89,11 +105,14 @@ export default function Hero() {
               <motion.div
                 key={animationKey}
                 initial={{ opacity: 0, y: 10 }}
-                animate={prefersReducedMotion
-                  ? { opacity: 1, y: -10 }
-                  : { opacity: [0, 1, 1, 0], y: [10, -10, -10, 10] }}
+                animate={animationKey === 0
+                  ? { opacity: 0, y: 10 }
+                  : (prefersReducedMotion
+                    ? { opacity: [0, 1, 1, 0], y: [-10, -10, -10, -10] }
+                    : { opacity: [0, 1, 1, 0], y: [10, -10, -10, 10] })
+                }
                 transition={prefersReducedMotion
-                  ? { duration: 0 }
+                  ? { duration: 2, times: [0, 0.2, 0.8, 1] }
                   : { duration: 2, times: [0, 0.2, 0.8, 1], ease: 'easeInOut' }}
                 className="absolute -top-3 left-[70%] md:left-[75%] whitespace-nowrap pointer-events-none z-10"
               >
@@ -126,8 +145,8 @@ export default function Hero() {
             {/* "Hi," — appears first */}
             <motion.span
               className="inline-block mr-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              initial={getInitial({ opacity: 0, y: 20 })}
+              animate={getAnimate({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })}
               transition={{ duration: 0.45, delay: d(0.5) }}
             >
               Hi,
@@ -136,10 +155,8 @@ export default function Hero() {
             {/* "I'm " — blurs in after the pause */}
             <motion.span
               className="inline-block mr-3"
-              initial={{ opacity: 0, y: 32, filter: 'blur(10px)' }}
-              animate={show
-                ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                : { opacity: 0, y: 32, filter: 'blur(10px)' }}
+              initial={getInitial({ opacity: 0, y: 32, filter: 'blur(10px)' })}
+              animate={getAnimate({ opacity: 0, y: 32, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)' })}
               transition={{ duration: prefersReducedMotion ? 0 : 0.75, delay: d(1.1), ease: [0.16, 1, 0.3, 1] }}
             >
               I&apos;m
@@ -151,8 +168,8 @@ export default function Hero() {
                 <motion.span
                   key={i}
                   className="inline-block"
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                  initial={getInitial({ opacity: 0, y: 24 })}
+                  animate={getAnimate({ opacity: 0, y: 24 }, { opacity: 1, y: 0 })}
                   transition={{
                     duration: prefersReducedMotion ? 0 : 0.4,
                     delay: d(1.1 + 0.06 * i),
@@ -168,8 +185,8 @@ export default function Hero() {
           {/* ── Tagline ── */}
           <motion.p
             className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto !mt-2 md:!mt-3 lg:!mt-4"
-            initial={{ opacity: 0, y: 16 }}
-            animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            initial={getInitial({ opacity: 0, y: 16 })}
+            animate={getAnimate({ opacity: 0, y: 16 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(1.7) }}
           >
             A Full Stack Developer from{' '}
@@ -179,8 +196,8 @@ export default function Hero() {
           {/* ── Description ── */}
           <motion.p
             className="text-sm md:text-base lg:text-lg text-ink-soft dark:text-primary-300 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 16 }}
-            animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            initial={getInitial({ opacity: 0, y: 16 })}
+            animate={getAnimate({ opacity: 0, y: 16 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(1.9) }}
           >
             End-to-end developer with over{' '}
@@ -192,15 +209,15 @@ export default function Hero() {
           {/* ── Nav items ── */}
           <motion.div
             className="space-y-2 pt-2"
-            initial={{ opacity: 0, y: 16 }}
-            animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            initial={getInitial({ opacity: 0, y: 16 })}
+            animate={getAnimate({ opacity: 0, y: 16 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(2.1) }}
           >
             {heroNavItems.map((navItem, i) => (
               <motion.button
                 key={navItem.page}
-                initial={{ opacity: 0, y: 12 }}
-                animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                initial={getInitial({ opacity: 0, y: 12 })}
+                animate={getAnimate({ opacity: 0, y: 12 }, { opacity: 1, y: 0 })}
                 transition={{ duration: 0.4, delay: d(2.1 + i * 0.08) }}
                 onClick={() => navigateTo(navItem.page)}
                 className="group flex flex-col items-center w-full text-center"
@@ -218,8 +235,8 @@ export default function Hero() {
           {/* ── Download Resume ── */}
           <motion.div
             className="pt-2 xl:pt-4"
-            initial={{ opacity: 0 }}
-            animate={show ? { opacity: 1 } : { opacity: 0 }}
+            initial={getInitial({ opacity: 0 })}
+            animate={getAnimate({ opacity: 0 }, { opacity: 1 })}
             transition={{ duration: 0.5, delay: d(2.3) }}
           >
             <a
