@@ -261,7 +261,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                         alt={`${project.title} - Image ${activeIndex + 2}`}
                         width={800}
                         height={600}
-                        className="w-full h-auto"
+                        className="w-full h-auto select-none pointer-events-none"
+                        draggable={false}
                         onLoad={(e) => {
                           const img = e.currentTarget;
                           setContainerHeight(img.offsetHeight);
@@ -327,7 +328,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                             alt={`Thumbnail ${index + 1}`}
                             fill
                             sizes="80px"
-                            className="object-cover"
+                            className="object-cover pointer-events-none"
+                            draggable={false}
                           />
                         </motion.button>
                       ))}

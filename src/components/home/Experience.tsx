@@ -6,6 +6,33 @@ import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
 import Image from 'next/image';
 import NumberFlow from '@number-flow/react';
 
+function SkillBar({ pct, delay, inView }: { pct: number; delay: number; inView: boolean }) {
+  return (
+    <motion.div
+      className="absolute left-0 bottom-0 top-0 -z-10 bg-accent-500/10 dark:bg-accent-400/10 rounded-l-md"
+      initial={{ width: 0 }}
+      animate={inView ? { width: `${pct}%` } : { width: 0 }}
+      transition={{ duration: 1.5, delay, ease: 'easeOut' }}
+    />
+  );
+}
+
+function SkillRow({ years, area, index }: { years: number; area: string; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '0px' });
+  return (
+    <div ref={ref} className="relative flex items-center justify-between gap-2 overflow-hidden rounded-md group">
+      <SkillBar pct={(years / 10) * 100} delay={index * 0.1} inView={inView} />
+      <div className="flex items-baseline gap-2 py-1.5 px-3">
+        <span className="text-2xl font-bold text-ink dark:text-primary-50 tabular-nums">
+          <AnimatedNumber value={years} delay={index * 0.1} />
+        </span>
+        <span className="text-sm text-ink-soft dark:text-primary-300">years in {area}</span>
+      </div>
+    </div>
+  );
+}
+
 function AnimatedNumber({ value, delay = 0 }: { value: number; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '0px' });
@@ -154,21 +181,7 @@ export default function Experience() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 pt-2">
                 {yearsSummary.map(({ years, area }, i) => (
-                  <div key={area} className="relative flex items-center justify-between gap-2 overflow-hidden rounded-md group">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${(years / 10) * 100}%` }}
-                      viewport={{ once: true, margin: '-50px' }}
-                      transition={{ duration: 1.5, delay: i * 0.1, ease: 'easeOut' }}
-                      className="absolute left-0 bottom-0 top-0 bg-accent-500/10 dark:bg-accent-400/10 -z-10"
-                    />
-                    <div className="flex items-baseline gap-2 py-1.5 px-3">
-                      <span className="text-2xl font-bold text-ink dark:text-primary-50 tabular-nums">
-                        <AnimatedNumber value={years} delay={i * 0.1} />
-                      </span>
-                      <span className="text-sm text-ink-soft dark:text-primary-300">years in {area}</span>
-                    </div>
-                  </div>
+                  <SkillRow key={area} years={years} area={area} index={i} />
                 ))}
               </div>
             </div>
@@ -332,16 +345,28 @@ export default function Experience() {
                       }, 450);
                     }
                   }}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-ink-soft dark:text-primary-300 hover:text-ink dark:hover:text-primary-100 transition-colors"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors group"
                 >
                   {isExpanded ? (
                     <>
-                      <HiChevronUp className="w-4 h-4" />
+                      <motion.span
+                        animate={{ y: [0, -3, 0] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                        className="flex"
+                      >
+                        <HiChevronUp className="w-4 h-4" />
+                      </motion.span>
                       View Less
                     </>
                   ) : (
                     <>
-                      <HiChevronDown className="w-4 h-4" />
+                      <motion.span
+                        animate={{ y: [0, 4, 0] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                        className="flex"
+                      >
+                        <HiChevronDown className="w-4 h-4" />
+                      </motion.span>
                       View More ({experiences.length - INITIAL_DISPLAY_COUNT} more)
                     </>
                   )}

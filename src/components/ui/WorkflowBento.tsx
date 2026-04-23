@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { useRef, useEffect, useState, Fragment } from 'react';
+import { motion, useInView, useReducedMotion, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { HiOutlineCode, HiOutlineClipboardList, HiOutlineCloudUpload, HiOutlineDesktopComputer } from 'react-icons/hi';
 
 function KanbanCard() {
@@ -37,11 +37,9 @@ function KanbanCard() {
 
 function CodeGraph() {
   const prefersReducedMotion = useReducedMotion();
-  // Generate a random-looking grid for commits
   const cols = 12;
   const rows = 4;
   const blocks = Array.from({ length: cols * rows }).map((_, i) => {
-    // Make some blocks "active"
     const isActive = Math.random() > 0.6;
     const isVeryActive = Math.random() > 0.85;
     return { id: i, isActive, isVeryActive };
@@ -147,6 +145,135 @@ function RocketCard() {
   );
 }
 
+const steps = [
+  {
+    icon: <HiOutlineClipboardList className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    label: '1. Plan',
+    card: <KanbanCard />,
+  },
+  {
+    icon: <HiOutlineCode className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    label: '2. Build',
+    card: <CodeGraph />,
+  },
+  {
+    icon: <HiOutlineCloudUpload className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    label: '3. Test & CI',
+    card: <PipelineCard />,
+  },
+  {
+    icon: <HiOutlineDesktopComputer className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    label: '4. Ship',
+    card: <RocketCard />,
+  },
+];
+
+const AUTOPLAY_INTERVAL = 3000;
+
+function MobileCarousel() {
+  const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  const goTo = useCallback((index: number, dir: number) => {
+    setDirection(dir);
+    setActive(index);
+  }, []);
+
+  const next = useCallback(() => {
+    const nextIndex = (active + 1) % steps.length;
+    goTo(nextIndex, 1);
+  }, [active, goTo]);
+
+  const prev = useCallback(() => {
+    const prevIndex = (active - 1 + steps.length) % steps.length;
+    goTo(prevIndex, -1);
+  }, [active, goTo]);
+
+  // Auto-advance
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    timerRef.current = setInterval(next, AUTOPLAY_INTERVAL);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [next, prefersReducedMotion]);
+
+  // Touch/swipe support
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+    touchStartX.current = null;
+  };
+
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%', opacity: 0 }),
+  };
+
+  const step = steps[active];
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Step progress bar */}
+      <div className="flex gap-1.5">
+        {steps.map((s, i) => (
+          <div
+            key={i}
+            className="flex-1 h-1 rounded-full overflow-hidden bg-primary-200 dark:bg-slate-700"
+            aria-label={s.label}
+          >
+            <motion.div
+              className="h-full bg-accent-500 rounded-full origin-left"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: i === active ? 1 : i < active ? 1 : 0 }}
+              transition={
+                i === active
+                  ? { duration: AUTOPLAY_INTERVAL / 1000, ease: 'linear' }
+                  : { duration: 0.25 }
+              }
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Card with slide animation */}
+      <div
+        className="relative overflow-hidden rounded-2xl"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={active}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            className="bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
+                {step.icon}
+              </div>
+              <h4 className="font-semibold text-ink dark:text-primary-50">{step.label}</h4>
+              <span className="ml-auto text-xs text-ink-muted dark:text-primary-400 tabular-nums">{active + 1} / {steps.length}</span>
+            </div>
+            {step.card}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+
+    </div>
+  );
+}
+
 export default function WorkflowBento() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -155,9 +282,7 @@ export default function WorkflowBento() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15
-      }
+      transition: { staggerChildren: 0.15 }
     }
   };
 
@@ -178,54 +303,39 @@ export default function WorkflowBento() {
         <p className="text-base md:text-lg text-ink-soft dark:text-primary-300 leading-relaxed">My end-to-end process for taking ideas from initial planning all the way to a live, production-ready product.</p>
       </motion.div>
 
+      {/* Mobile: Carousel — Desktop: Bento grid */}
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
       >
-        {/* Step 1: Plan */}
-        <motion.div variants={itemVariants} className="col-span-1 md:col-span-1 lg:col-span-1 bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
-              <HiOutlineClipboardList className="w-5 h-5 text-accent-600 dark:text-accent-400" />
-            </div>
-            <h4 className="font-semibold text-ink dark:text-primary-50">1. Plan</h4>
-          </div>
-          <KanbanCard />
-        </motion.div>
+        {/* Mobile carousel (hidden on md+) */}
+        <div className="md:hidden">
+          <MobileCarousel />
+        </div>
 
-        {/* Step 2: Develop */}
-        <motion.div variants={itemVariants} className="col-span-1 md:col-span-1 lg:col-span-1 bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
-              <HiOutlineCode className="w-5 h-5 text-accent-600 dark:text-accent-400" />
-            </div>
-            <h4 className="font-semibold text-ink dark:text-primary-50">2. Build</h4>
-          </div>
-          <CodeGraph />
-        </motion.div>
-
-        {/* Step 3: CI/CD */}
-        <motion.div variants={itemVariants} className="col-span-1 md:col-span-1 lg:col-span-1 bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
-              <HiOutlineCloudUpload className="w-5 h-5 text-accent-600 dark:text-accent-400" />
-            </div>
-            <h4 className="font-semibold text-ink dark:text-primary-50">3. Test & CI</h4>
-          </div>
-          <PipelineCard />
-        </motion.div>
-
-        {/* Step 4: Deploy */}
-        <motion.div variants={itemVariants} className="col-span-1 md:col-span-1 lg:col-span-1 bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
-              <HiOutlineDesktopComputer className="w-5 h-5 text-accent-600 dark:text-accent-400" />
-            </div>
-            <h4 className="font-semibold text-ink dark:text-primary-50">4. Ship</h4>
-          </div>
-          <RocketCard />
+        {/* Desktop bento grid (hidden below md) */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {steps.map((step) => (
+            <motion.div
+              key={step.label}
+              variants={itemVariants}
+              className="bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
+                  {step.icon}
+                </div>
+                <h4 className="font-semibold text-ink dark:text-primary-50">{step.label}</h4>
+              </div>
+              {step.card}
+            </motion.div>
+          ))}
         </motion.div>
       </motion.div>
     </div>
