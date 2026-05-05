@@ -134,11 +134,3 @@ export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) 
 })
 
 BackgroundBeams.displayName = "BackgroundBeams"
-
-export default function BackgroundBeamsDemo() {
-  return (
-    <div className="relative h-screen w-screen overflow-hidden bg-neutral-950">
-      <BackgroundBeams />
-    </div>
-  )
-}

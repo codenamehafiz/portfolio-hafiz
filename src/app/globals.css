@@ -181,65 +181,8 @@
   }
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
-}
-
-/* Floating animation */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-.animate-float {
-  animation: float 15s ease-in-out infinite;
-}
-
-@media (max-width: 768px) {
-  body::before {
-    animation-duration: 55s;
-    filter: blur(20px);
-    opacity: 0.75;
-  }
-
-  body::after {
-    opacity: 0.35;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-
-  body::before {
-    animation: none;
-    transform: none;
-    filter: blur(18px);
-    opacity: 0.5;
-  }
-
-  body::after {
-    opacity: 0.2;
-  }
-}
-
-/* Smooth reveal on scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
 }

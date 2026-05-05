@@ -14,6 +14,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-hafiz-idris.vercel.app'
+  ),
   title: {
     default: 'Hafiz Idris - Full Stack Developer',
     template: '%s | Hafiz Idris',
