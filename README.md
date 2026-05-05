@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/images/avatar.png" alt="Hafiz Idris avatar" width="160" />
+</p>
+
 # Hafiz Idris — Portfolio
 
 Personal portfolio of Hafiz Idris, Full Stack Developer based in Johor, Malaysia.

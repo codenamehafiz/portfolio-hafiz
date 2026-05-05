@@ -87,7 +87,7 @@ export default function About() {
                 transition={{ duration: 0.4, delay: 0.25 }}
                 className="text-xl md:text-2xl font-medium text-ink-medium dark:text-primary-200 leading-relaxed"
               >
-                Hi, I'm Hafiz — a builder at heart and a developer by craft.
+                Hi, I'm Hafiz Idris — a builder at heart and a developer by craft.
               </motion.p>
 
               {/* Narrative Content */}
