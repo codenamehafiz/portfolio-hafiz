@@ -79,37 +79,37 @@ function PipelineCard() {
         {/* Node 0 */}
         <div className="relative w-8 h-8 shrink-0 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center z-10">
           <div className="absolute inset-0 rounded-full border-2 border-primary-200 dark:border-slate-700" />
-          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0 }} className="absolute inset-0 rounded-full border-2 border-emerald-500" />
+          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0 }} className="absolute inset-0 rounded-full border-2 border-[#F7C948]" />
           <motion.div animate={prefersReducedMotion ? { opacity: 1 } : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0 }}>
-            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            <svg className="w-4 h-4 text-[#F7C948]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </motion.div>
         </div>
 
         {/* Line 0 */}
         <div className="w-full h-1 bg-primary-200 dark:bg-slate-700 rounded-full relative overflow-hidden mx-1">
-          <motion.div initial={prefersReducedMotion ? { x: '100%' } : { x: '-100%' }} animate={prefersReducedMotion ? {} : { x: ['-100%', '100%', '100%'] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.3, 1], repeat: Infinity, delay: 0.2 }} className="absolute inset-0 bg-emerald-500 rounded-full" />
+          <motion.div initial={prefersReducedMotion ? { x: '100%' } : { x: '-100%' }} animate={prefersReducedMotion ? {} : { x: ['-100%', '100%', '100%'] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.3, 1], repeat: Infinity, delay: 0.2 }} className="absolute inset-0 bg-[#F7C948] rounded-full" />
         </div>
 
         {/* Node 1 */}
         <div className="relative w-8 h-8 shrink-0 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center z-10">
           <div className="absolute inset-0 rounded-full border-2 border-primary-200 dark:border-slate-700" />
-          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0.8 }} className="absolute inset-0 rounded-full border-2 border-emerald-500" />
+          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0.8 }} className="absolute inset-0 rounded-full border-2 border-[#F7C948]" />
           <motion.div animate={prefersReducedMotion ? { opacity: 1 } : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 0.8 }}>
-            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            <svg className="w-4 h-4 text-[#F7C948]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </motion.div>
         </div>
 
         {/* Line 1 */}
         <div className="w-full h-1 bg-primary-200 dark:bg-slate-700 rounded-full relative overflow-hidden mx-1">
-          <motion.div initial={prefersReducedMotion ? { x: '100%' } : { x: '-100%' }} animate={prefersReducedMotion ? {} : { x: ['-100%', '100%', '100%'] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.3, 1], repeat: Infinity, delay: 1.0 }} className="absolute inset-0 bg-emerald-500 rounded-full" />
+          <motion.div initial={prefersReducedMotion ? { x: '100%' } : { x: '-100%' }} animate={prefersReducedMotion ? {} : { x: ['-100%', '100%', '100%'] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.3, 1], repeat: Infinity, delay: 1.0 }} className="absolute inset-0 bg-[#F7C948] rounded-full" />
         </div>
 
         {/* Node 2 */}
         <div className="relative w-8 h-8 shrink-0 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center z-10">
           <div className="absolute inset-0 rounded-full border-2 border-primary-200 dark:border-slate-700" />
-          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 1.6 }} className="absolute inset-0 rounded-full border-2 border-emerald-500" />
+          <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }} animate={prefersReducedMotion ? {} : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 1.6 }} className="absolute inset-0 rounded-full border-2 border-[#F7C948]" />
           <motion.div animate={prefersReducedMotion ? { opacity: 1 } : { opacity: [0, 1, 1, 0] }} transition={prefersReducedMotion ? {} : { duration: 4, times: [0, 0.1, 0.3, 1], repeat: Infinity, delay: 1.6 }}>
-            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            <svg className="w-4 h-4 text-[#F7C948]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </motion.div>
         </div>
       </div>
@@ -136,10 +136,10 @@ function RocketCard() {
       />
       <div className="mt-4 flex items-center gap-2">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F7C948] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F7C948]"></span>
         </span>
-        <span className="text-xs font-medium text-emerald-500 tracking-wider uppercase">Live in Production</span>
+        <span className="text-xs font-medium text-[#F7C948] tracking-wider uppercase">Live in Production</span>
       </div>
     </div>
   );
@@ -147,22 +147,22 @@ function RocketCard() {
 
 const steps = [
   {
-    icon: <HiOutlineClipboardList className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    icon: <HiOutlineClipboardList className="w-5 h-5 text-[#F7C948]" />,
     label: '1. Plan',
     card: <KanbanCard />,
   },
   {
-    icon: <HiOutlineCode className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    icon: <HiOutlineCode className="w-5 h-5 text-[#F7C948]" />,
     label: '2. Build',
     card: <CodeGraph />,
   },
   {
-    icon: <HiOutlineCloudUpload className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    icon: <HiOutlineCloudUpload className="w-5 h-5 text-[#F7C948]" />,
     label: '3. Test & CI',
     card: <PipelineCard />,
   },
   {
-    icon: <HiOutlineDesktopComputer className="w-5 h-5 text-accent-600 dark:text-accent-400" />,
+    icon: <HiOutlineDesktopComputer className="w-5 h-5 text-[#F7C948]" />,
     label: '4. Ship',
     card: <RocketCard />,
   },
@@ -258,7 +258,7 @@ function MobileCarousel() {
             className="bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
+              <div className="p-2 bg-primary-100/50 dark:bg-primary-100/10 rounded-lg">
                 {step.icon}
               </div>
               <h4 className="font-semibold text-ink dark:text-primary-50">{step.label}</h4>
@@ -328,7 +328,7 @@ export default function WorkflowBento() {
               className="bg-white dark:bg-[#1e1e2e] border border-primary-200 dark:border-primary-800 rounded-2xl p-5 shadow-lg flex flex-col hover:border-accent-500/50 transition-colors"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg">
+                <div className="p-2 bg-primary-100/50 dark:bg-primary-100/10 rounded-lg">
                   {step.icon}
                 </div>
                 <h4 className="font-semibold text-ink dark:text-primary-50">{step.label}</h4>

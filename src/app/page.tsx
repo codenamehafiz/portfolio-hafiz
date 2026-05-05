@@ -48,7 +48,7 @@ function PageContent() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 z-0 pointer-events-none"
+            className="absolute top-0 left-0 w-full h-screen z-0 pointer-events-none"
           >
             <BackgroundBeams className="opacity-30 dark:opacity-30 transition-opacity duration-1000" />
           </motion.div>

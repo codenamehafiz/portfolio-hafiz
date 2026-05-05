@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { HiArrowLeft, HiExternalLink, HiChevronLeft, HiChevronRight, HiX } from 'react-icons/hi';
 import { FaGithub } from 'react-icons/fa';
 import { Project } from '@/data/projects';
@@ -14,6 +14,7 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project }: ProjectDetailProps) {
+  const router = useRouter();
   const extraImages = project.images;
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -63,13 +64,22 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           animate={{ opacity: 1, x: 0 }}
           className="mb-8"
         >
-          <Link
-            href="/projects"
+          <button
+            type="button"
+            onClick={() => {
+              // Prefer history back so the listing slide-state is preserved.
+              // Fallback to navigating to "/" if there's no prior history (e.g. direct link).
+              if (typeof window !== 'undefined' && window.history.length > 1) {
+                router.back();
+              } else {
+                router.push('/');
+              }
+            }}
             className="inline-flex items-center text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
             <HiArrowLeft className="w-5 h-5 mr-2" />
             Back to Projects
-          </Link>
+          </button>
         </motion.div>
 
         {/* About This Project — image left, details right */}
@@ -105,7 +115,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 text-sm font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full"
+                      className="px-3 py-1 text-sm font-medium bg-[#F7C948]/15 text-[#a16207] dark:text-[#F7C948] rounded-full"
                     >
                       {tag}
                     </span>

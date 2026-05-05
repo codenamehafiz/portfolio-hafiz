@@ -54,7 +54,12 @@ export function useNavigation() {
 }
 
 export function NavigationProvider({ children }: { children: React.ReactNode }) {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  // Read the URL on the very first render so we never paint the wrong page
+  // (e.g., the hero flashing before useEffect switches to /projects).
+  const [currentPage, setCurrentPage] = useState<Page>(() => {
+    if (typeof window === 'undefined') return 'home';
+    return PATH_TO_PAGE[window.location.pathname] || 'home';
+  });
   const [direction, setDirection] = useState(1);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [slideComplete, setSlideComplete] = useState(true);

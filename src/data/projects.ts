@@ -69,7 +69,7 @@ export const projects: Project[] = [
       '/images/projects/changokushi-dashboard/changokushi-dashboard-player-details-jp.png',
       '/images/projects/changokushi-dashboard/changokushi-dashboard-404-jp.png',
     ],
-    tags: ['Web Development', 'Admin Dashboard', 'Gaming'],
+    tags: ['Web Development', 'Admin Dashboard'],
     technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'NextAuth.js', 'MongoDB', 'Express'],
     featured: true,
     challenge: 'The system needed secure management of a growing player base and development pipeline while handling sensitive actions like email changes and maintenance controls across multiple authentication methods and languages.',

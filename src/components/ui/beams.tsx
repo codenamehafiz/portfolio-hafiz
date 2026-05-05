@@ -1,6 +1,5 @@
 "use client"
 
-import { motion, useReducedMotion } from "framer-motion"
 import React, { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
@@ -8,36 +7,61 @@ export interface BackgroundBeamsProps {
   className?: string
 }
 
-const pathData = [
-  "M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875",
-  "M-358 -213C-358 -213 -290 192 174 319C638 446 706 851 706 851",
-  "M-336 -237C-336 -237 -268 168 196 295C660 422 728 827 728 827",
-  "M-314 -261C-314 -261 -246 144 218 271C682 398 750 803 750 803",
-  "M-292 -285C-292 -285 -224 120 240 247C704 374 772 779 772 779",
-  "M-270 -309C-270 -309 -202 96 262 223C726 350 794 755 794 755",
-  "M-248 -333C-248 -333 -180 72 284 199C748 326 816 731 816 731",
-  "M-226 -357C-226 -357 -158 48 306 175C770 302 838 707 838 707",
-  "M-204 -381C-204 -381 -136 24 328 151C792 278 860 683 860 683",
-  "M-182 -405C-182 -405 -114 0 350 127C814 254 882 659 882 659",
-  "M-160 -429C-160 -429 -92 -24 372 103C836 230 904 635 904 635",
-  "M-138 -453C-138 -453 -70 -48 394 79C858 206 926 611 926 611",
-  "M-116 -477C-116 -477 -48 -72 416 55C880 182 948 587 948 587",
-  "M-94 -501C-94 -501 -26 -96 438 31C902 158 970 563 970 563",
-  "M-72 -525C-72 -525 -4 -120 460 7C924 134 992 539 992 539",
-  "M-50 -549C-50 -549 18 -144 482 -17C946 110 1014 515 1014 515",
-  "M-28 -573C-28 -573 40 -168 504 -41C968 86 1036 491 1036 491",
-  "M-6 -597C-6 -597 62 -192 526 -65C990 62 1058 467 1058 467",
-  "M16 -621C16 -621 84 -216 548 -89C1012 38 1080 443 1080 443",
-  "M38 -645C38 -645 106 -240 570 -113C1034 14 1102 419 1102 419",
-]
+// Generate sinusoidal wavy paths — many wiggles along each diagonal beam.
+// `xStep` controls horizontal spread between beams; mobile uses a wider step
+// so the fan spreads further right and more beams enter the visible column.
+function generateWavyPath(beamIndex: number, totalBeams: number, xStep: number = 32): string {
+  const xShift = (beamIndex - totalBeams / 2) * xStep
+  const yShift = (beamIndex - totalBeams / 2) * -34
 
-const animations = pathData.map((_, i) => ({
-  duration: 4 + (i % 5) * 0.8,
-  delay: i * 0.15,
-}))
+  const startX = -380 + xShift
+  const startY = -189 + yShift
+  const endX = 684 + xShift
+  const endY = 875 + yShift
+
+  const dx = endX - startX
+  const dy = endY - startY
+  const len = Math.hypot(dx, dy)
+  const perpX = -dy / len
+  const perpY = dx / len
+
+  const waves = 18
+  const amplitude = 32
+  const samplesPerWave = 3
+  const totalSamples = waves * samplesPerWave
+
+  const points: [number, number][] = []
+  for (let i = 0; i <= totalSamples; i++) {
+    const t = i / totalSamples
+    const offset = Math.sin(t * waves * Math.PI * 2 + beamIndex * 0.4) * amplitude
+    points.push([
+      startX + dx * t + perpX * offset,
+      startY + dy * t + perpY * offset,
+    ])
+  }
+
+  let path = `M${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[Math.max(0, i - 1)]
+    const p1 = points[i]
+    const p2 = points[i + 1]
+    const p3 = points[Math.min(points.length - 1, i + 2)]
+    const cp1x = p1[0] + (p2[0] - p0[0]) / 6
+    const cp1y = p1[1] + (p2[1] - p0[1]) / 6
+    const cp2x = p2[0] - (p3[0] - p1[0]) / 6
+    const cp2y = p2[1] - (p3[1] - p1[1]) / 6
+    path += ` C${cp1x.toFixed(1)} ${cp1y.toFixed(1)},${cp2x.toFixed(1)} ${cp2y.toFixed(1)},${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`
+  }
+
+  return path
+}
+
+const TOTAL_BEAMS = 15
+
+const desktopPaths = Array.from({ length: TOTAL_BEAMS }, (_, i) => generateWavyPath(i, TOTAL_BEAMS, 32))
+const mobilePaths = Array.from({ length: TOTAL_BEAMS }, (_, i) => generateWavyPath(i, TOTAL_BEAMS, 70))
 
 export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) => {
-  const prefersReducedMotion = useReducedMotion()
   const [isCompactViewport, setIsCompactViewport] = useState(false)
 
   useEffect(() => {
@@ -52,58 +76,42 @@ export const BackgroundBeams = React.memo(({ className }: BackgroundBeamsProps) 
     }
   }, [])
 
-  const visiblePaths = prefersReducedMotion
-    ? pathData.slice(0, 6)
-    : isCompactViewport
-      ? pathData.slice(0, 10)
-      : pathData
+  // Mobile uses a wider-step path set so the diagonal fan spreads further
+  // right and more beams pass through the visible portrait column.
+  const paths = isCompactViewport ? mobilePaths : desktopPaths
 
   return (
     <div className={cn("pointer-events-none absolute inset-0 h-full w-full", className)}>
+      <style>{`
+        @keyframes beams-reveal-ltr {
+          from { clip-path: inset(0 100% 0 0); }
+          to { clip-path: inset(0 0 0 0); }
+        }
+        .beams-reveal {
+          clip-path: inset(0 100% 0 0);
+          animation: beams-reveal-ltr 1.4s ease-out forwards;
+        }
+      `}</style>
       <svg
-        className="absolute h-full w-full"
+        className="beams-reveal absolute h-full w-full"
         fill="none"
         viewBox="0 0 696 316"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid slice"
       >
-        <g className="stroke-ink/10 dark:stroke-white/10" opacity="0.1">
-          {visiblePaths.map((d, i) => (
-            <path key={`static-${i}`} d={d} strokeWidth="0.5" />
-          ))}
-        </g>
-
-        {visiblePaths.map((d, i) => (
-          <motion.path
+        {paths.map((d, i) => (
+          <path
             key={`beam-${i}`}
             d={d}
             stroke={`url(#gradient-${i})`}
             strokeWidth="1"
             strokeLinecap="round"
-            initial={prefersReducedMotion ? { pathLength: 1, opacity: 0.16 } : { pathLength: 0, opacity: 0 }}
-            animate={
-              prefersReducedMotion
-                ? { pathLength: 1, opacity: 0.16 }
-                : {
-                    pathLength: [0, 1],
-                    opacity: [0, 0.3, 0.3, 0],
-                  }
-            }
-            transition={
-              prefersReducedMotion
-                ? { duration: 0 }
-                : {
-                    duration: animations[i].duration,
-                    delay: animations[i].delay,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeInOut",
-                  }
-            }
+            opacity={0.35}
           />
         ))}
 
         <defs>
-          {visiblePaths.map((_, i) => (
+          {paths.map((_, i) => (
             <linearGradient
               key={`gradient-${i}`}
               id={`gradient-${i}`}

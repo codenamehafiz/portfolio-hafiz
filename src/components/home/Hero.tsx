@@ -94,7 +94,8 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: d(1.8) }}
           >
             <motion.div
-              className="relative w-28 h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 cursor-pointer mx-auto"
+              className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 cursor-pointer mx-auto"
+
               animate={showSmile && !prefersReducedMotion ? { rotate: [0, -3, 3, -3, 3, 0] } : {}}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
               onClick={triggerAnimation}
@@ -129,14 +130,22 @@ export default function Hero() {
                 </div>
               </motion.div>
 
-              <div className="absolute inset-3 rounded-full border-4 border-primary-300 dark:border-accent-600" />
-              <Image
-                src={showSmile ? '/images/avatar-smile.png' : '/images/avatar.png'}
-                alt="Profile"
-                fill
-                className="object-cover rounded-full p-1"
-                priority
-              />
+              {/* Circle base — character pops up out of this */}
+              <div className="absolute inset-4 md:inset-8 rounded-full border-4 border-primary-300 dark:border-primary-100/70 bg-ink dark:bg-transparent" />
+
+              {/* Character — extends above the circle for a 3D cutout feel */}
+              <div className="absolute -inset-x-[20%] bottom-0 h-[140%] pointer-events-none">
+                <Image
+                  src={showSmile ? '/images/avatar-smile.png' : '/images/avatar.png'}
+                  alt="Profile"
+                  fill
+                  sizes="(min-width: 1024px) 270px, (min-width: 768px) 224px, 180px"
+                  quality={90}
+                  className="object-contain object-bottom select-none [-webkit-user-drag:none]"
+                  draggable={false}
+                  priority
+                />
+              </div>
             </motion.div>
           </motion.div>
 
@@ -162,48 +171,88 @@ export default function Hero() {
               I&apos;m
             </motion.span>
 
-            {/* "Hafiz" — each letter staggers in */}
-            <span className="heading-gradient inline-flex">
-              {HAFIZ_LETTERS.map((letter, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block"
-                  initial={getInitial({ opacity: 0, y: 24 })}
-                  animate={getAnimate({ opacity: 0, y: 24 }, { opacity: 1, y: 0 })}
-                  transition={{
-                    duration: prefersReducedMotion ? 0 : 0.4,
-                    delay: d(1.1 + 0.06 * i),
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
+            {/* "Hafiz" — serif italic with hand-drawn underline + sparkle */}
+            <span className="relative inline-flex">
+              <span className="inline-flex">
+                {HAFIZ_LETTERS.map((letter, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block"
+                    initial={getInitial({ opacity: 0, y: 24 })}
+                    animate={getAnimate({ opacity: 0, y: 24 }, { opacity: 1, y: 0 })}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.4,
+                      delay: d(1.1 + 0.06 * i),
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </span>
+
+              {/* Hand-drawn squiggle underline */}
+              <motion.svg
+                aria-hidden
+                className="absolute left-0 -bottom-1 md:-bottom-2 w-full h-3 md:h-4 text-[#F7C948] overflow-visible"
+                viewBox="0 0 200 12"
+                preserveAspectRatio="none"
+                fill="none"
+                initial={getInitial({ opacity: 0 })}
+                animate={getAnimate({ opacity: 0 }, { opacity: 1 })}
+                transition={{ duration: 0.2, delay: d(1.5) }}
+              >
+                <motion.path
+                  d="M2 7 Q 25 1 50 7 T 100 7 T 150 7 T 198 7"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  initial={getInitial({ pathLength: 0 })}
+                  animate={getAnimate({ pathLength: 0 }, { pathLength: 1 })}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.8, delay: d(1.55), ease: [0.16, 1, 0.3, 1] }}
+                />
+              </motion.svg>
+
+              {/* Sparkle decoration — entrance via motion, continuous slow spin via CSS */}
+              <motion.div
+                aria-hidden
+                className="absolute -top-2 -right-3 md:-top-3 md:-right-5 w-4 h-4 md:w-5 md:h-5"
+                initial={getInitial({ opacity: 0, scale: 0 })}
+                animate={getAnimate({ opacity: 0, scale: 0 }, { opacity: 1, scale: 1 })}
+                transition={{ duration: 0.5, delay: d(1.75), ease: [0.34, 1.56, 0.64, 1] }}
+              >
+                <div className="w-full h-full motion-safe:animate-[star-float_4.5s_ease-in-out_infinite]">
+                  <svg
+                    className="w-full h-full text-[#F7C948] motion-safe:animate-[spin_12s_linear_infinite]"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 0 L13.5 9 L24 12 L13.5 15 L12 24 L10.5 15 L0 12 L10.5 9 Z" />
+                  </svg>
+                </div>
+              </motion.div>
             </span>
           </h1>
 
           {/* ── Tagline ── */}
           <motion.p
-            className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto !mt-2 md:!mt-3 lg:!mt-4"
+            className="text-lg md:text-xl lg:text-2xl text-ink-medium dark:text-primary-200 max-w-3xl mx-auto px-6 md:px-0 !mt-2 md:!mt-3 lg:!mt-4"
             initial={getInitial({ opacity: 0, y: 16 })}
             animate={getAnimate({ opacity: 0, y: 16 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(1.7) }}
           >
-            A Full Stack Developer from{' '}
-            <span className="text-ink dark:text-primary-100 font-semibold">Johor, Malaysia.</span>
+            A Full Stack Developer with{' '}
+            <span className="text-ink dark:text-primary-100 font-semibold">10+ years of experience.</span>
           </motion.p>
 
-          {/* ── Description ── */}
+          {/* ── Location ── */}
           <motion.p
-            className="text-sm md:text-base lg:text-lg text-ink-soft dark:text-primary-300 max-w-2xl mx-auto leading-relaxed"
+            className="inline-flex items-center justify-center gap-2 text-sm md:text-base text-ink-muted dark:text-primary-400 !mt-1 md:!mt-2"
             initial={getInitial({ opacity: 0, y: 16 })}
             animate={getAnimate({ opacity: 0, y: 16 }, { opacity: 1, y: 0 })}
             transition={{ duration: 0.5, delay: d(1.9) }}
           >
-            End-to-end developer with over{' '}
-            <span className="text-ink dark:text-primary-100 font-semibold">10 years of experience</span>,
-            across frontend, backend, and server systems, with a strong focus on{' '}
-            <u className="underline-offset-4">performance, reliability, and clean code</u>.
+            Building from Johor, Malaysia.
           </motion.p>
 
           {/* ── Nav items ── */}
@@ -222,8 +271,37 @@ export default function Hero() {
                 onClick={() => navigateTo(navItem.page)}
                 className="group flex flex-col items-center w-full text-center"
               >
-                <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink-soft/50 dark:text-primary-300/50 transition-all duration-300 group-hover:text-ink dark:group-hover:text-primary-100 group-hover:translate-x-2 group-hover:scale-105">
-                  {navItem.label}
+                <span className="inline-flex items-center justify-center gap-3 md:gap-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-105">
+                  {/* Slot — number at rest, squiggly arrow on hover */}
+                  <span className="relative inline-flex items-center justify-center w-7 md:w-9 lg:w-11 h-7 md:h-9 lg:h-11 flex-shrink-0">
+                    <span className="absolute font-mono text-base md:text-lg lg:text-xl font-medium text-ink-soft dark:text-primary-300 tabular-nums transition-opacity duration-300 group-hover:opacity-0">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <svg
+                      aria-hidden
+                      className="absolute w-full h-3 md:h-4 lg:h-5 text-[#F7C948] overflow-visible"
+                      viewBox="0 0 36 14"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path
+                        d="M2 7 Q 10 4 18 7 T 32 7"
+                        pathLength="1"
+                        className="[stroke-dasharray:1] [stroke-dashoffset:1] group-hover:[stroke-dashoffset:0] transition-[stroke-dashoffset] duration-500 ease-out"
+                      />
+                      <path
+                        d="M26 2 L 32 7 L 26 12"
+                        pathLength="1"
+                        className="[stroke-dasharray:1] [stroke-dashoffset:1] group-hover:[stroke-dashoffset:0] transition-[stroke-dashoffset] duration-300 ease-out [transition-delay:250ms]"
+                      />
+                    </svg>
+                  </span>
+                  <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink dark:text-primary-100">
+                    {navItem.label}
+                  </span>
                 </span>
                 <span className="text-xs md:text-sm text-ink-muted dark:text-primary-400 mt-1 transition-all duration-300 group-hover:text-ink-soft dark:group-hover:text-primary-300">
                   {navItem.subtitle}
@@ -242,10 +320,26 @@ export default function Hero() {
             <a
               href="/resume-hafiz-idris.pdf"
               download
-              className="inline-flex items-center text-sm text-ink-soft/60 dark:text-primary-300/60 hover:text-ink dark:hover:text-primary-100 transition-colors"
+              className="group relative inline-flex items-center text-sm text-ink-soft/60 dark:text-primary-300/60 hover:text-ink dark:hover:text-primary-100 transition-colors"
             >
               <HiDownload className="mr-1.5 w-4 h-4" />
-              Download Resume
+              <span className="relative">
+                Download Resume
+                <svg
+                  aria-hidden
+                  className="absolute left-0 -bottom-1 w-full h-1.5 text-[#F7C948] overflow-visible opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  viewBox="0 0 100 6"
+                  preserveAspectRatio="none"
+                  fill="none"
+                >
+                  <path
+                    d="M1 3 Q 12 0 25 3 T 50 3 T 75 3 T 99 3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
             </a>
           </motion.div>
 

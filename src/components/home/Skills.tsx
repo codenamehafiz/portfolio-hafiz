@@ -13,7 +13,7 @@ export default function Skills() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section id="skills" className="section-padding relative">
+    <section id="skills" className="pt-6 relative">
       <div ref={ref} className="container-custom max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -59,7 +59,7 @@ export default function Skills() {
                           transition={{ delay: 0.3 + categoryIndex * 0.1 + index * 0.03 }}
                           className="group flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-100/60 dark:bg-accent-900/30 hover:bg-primary-200/80 dark:hover:bg-accent-800/50 transition-colors"
                         >
-                          <Icon className="w-4 h-4 shrink-0 text-ink-soft dark:text-primary-300 group-hover:text-ink dark:group-hover:text-primary-100 transition-colors" />
+                          <Icon className="w-4 h-4 shrink-0 text-[#F7C948] transition-colors" />
                           <div className="min-w-0 flex-1">
                             <span className="text-sm font-medium text-ink-soft dark:text-primary-300 group-hover:text-ink dark:group-hover:text-primary-100 transition-colors truncate block">
                               {skill.name}

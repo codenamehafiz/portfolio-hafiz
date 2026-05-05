@@ -151,7 +151,7 @@ export default function Experience() {
   const firstHiddenRef = useRef<HTMLDivElement>(null);
   const lastVisibleRef = useRef<HTMLDivElement>(null);
   return (
-    <section id="experience" className="section-padding relative">
+    <section id="experience" className="pt-6 relative">
       <div className="container-custom max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -228,20 +228,20 @@ export default function Experience() {
                     delay: !isHidden && index >= INITIAL_DISPLAY_COUNT ? (index - INITIAL_DISPLAY_COUNT) * 0.1 : 0,
                     ease: [0.4, 0, 0.2, 1]
                   }}
-                  className={`group relative pl-8 md:pl-12 overflow-hidden ${isHidden ? 'pointer-events-none' : ''}`}
+                  className={`group relative pl-8 md:pl-12 ${index < INITIAL_DISPLAY_COUNT ? 'overflow-visible' : 'overflow-hidden'} ${isHidden ? 'pointer-events-none' : ''}`}
                 >
                   {/* Timeline Dot */}
                   {index === 0 ? (
                     /* Current/Latest position - pulsing dot */
-                    <div className="absolute left-0 top-[2px] w-[16px] h-[16px] flex items-center justify-center">
-                      <div className="absolute w-[16px] h-[16px] rounded-full bg-accent-500/30 dark:bg-accent-400/30 animate-ping" />
-                      <div className="absolute w-[16px] h-[16px] rounded-full bg-accent-500/20 dark:bg-accent-400/20 animate-pulse" />
-                      <div className="relative w-[10px] h-[10px] rounded-full bg-accent-500 dark:bg-accent-400" />
+                    <div className="absolute left-0 top-[2px] w-[16px] h-[16px] flex items-center justify-center rounded-full bg-white dark:bg-ink">
+                      <div className="absolute w-[16px] h-[16px] rounded-full bg-[#F7C948]/40 animate-ping" />
+                      <div className="absolute w-[16px] h-[16px] rounded-full bg-[#F7C948]/25 animate-pulse" />
+                      <div className="relative w-[10px] h-[10px] rounded-full bg-[#F7C948]" />
                     </div>
                   ) : (
                     /* Past positions */
-                    <div className="absolute left-0 top-[2px] w-[16px] h-[16px] rounded-full border-2 border-ink-soft/40 dark:border-primary-300/40 bg-white dark:bg-ink group-hover:border-accent-500 dark:group-hover:border-accent-400 group-hover:scale-110 transition-all">
-                      <div className="absolute inset-[3px] rounded-full bg-ink-soft/40 dark:bg-primary-300/40 group-hover:bg-accent-500 dark:group-hover:bg-accent-400 transition-colors" />
+                    <div className="absolute left-0 top-[2px] w-[16px] h-[16px] rounded-full border-2 border-[#F7C948]/50 bg-white dark:bg-ink group-hover:border-[#F7C948] group-hover:scale-110 transition-all">
+                      <div className="absolute inset-[3px] rounded-full bg-[#F7C948]/50 group-hover:bg-[#F7C948] transition-colors" />
                     </div>
                   )}
 

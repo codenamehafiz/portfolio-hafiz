@@ -125,12 +125,27 @@ export default function Contact() {
             >
               Get In <span className="heading-gradient">Touch</span>
             </motion.h2>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={ready ? { width: '64px' } : { width: 0 }}
-              transition={{ delay: 0.2, duration: 0.45 }}
-              className="h-1 bg-gradient-to-r from-primary-600 to-accent-600 mx-auto rounded-full"
-            />
+            {/* Hand-drawn squiggle accent under the title */}
+            <motion.svg
+              aria-hidden
+              className="h-3 w-16 mx-auto text-[#F7C948] overflow-visible"
+              viewBox="0 0 64 12"
+              preserveAspectRatio="none"
+              fill="none"
+              initial={{ opacity: 0 }}
+              animate={ready ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 }}
+            >
+              <motion.path
+                d="M2 6 Q 10 1 18 6 T 34 6 T 50 6 T 62 6"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={ready ? { pathLength: 1 } : { pathLength: 0 }}
+                transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </motion.svg>
             <motion.p
               initial={{ opacity: 0 }}
               animate={ready ? { opacity: 1 } : { opacity: 0 }}
@@ -169,8 +184,8 @@ export default function Contact() {
                     transition={{ duration: 0.35, delay: 0.25 + index * 0.08 }}
                     className="flex items-center space-x-4"
                   >
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                      <info.icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary-100/50 dark:bg-primary-900/30 flex items-center justify-center">
+                      <info.icon className="w-6 h-6 text-[#F7C948]" />
                     </div>
                     <div>
                       <p className="text-sm text-slate-500 dark:text-slate-400">{info.label}</p>
@@ -191,7 +206,7 @@ export default function Contact() {
 
               {/* Social Links */}
               <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Follow me on</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Contact me on</p>
                 <div className="flex space-x-4">
                   {socialLinks.map((social, index) => (
                     <motion.a
@@ -204,7 +219,7 @@ export default function Contact() {
                       transition={{ duration: 0.35, delay: 0.45 + index * 0.08 }}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 ${social.color} transition-colors`}
+                      className="p-3 rounded-lg bg-ink dark:bg-primary-100 text-primary-50 dark:text-ink hover:bg-ink-light dark:hover:bg-primary-200 transition-colors shadow-sm hover:shadow-md"
                       aria-label={social.name}
                     >
                       <social.icon className="w-6 h-6" />
@@ -227,7 +242,7 @@ export default function Contact() {
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Name *
+                      Name <span className="text-[#F7C948]">*</span>
                     </label>
                     <input
                       type="text"
@@ -243,7 +258,7 @@ export default function Contact() {
 
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Email *
+                      Email <span className="text-[#F7C948]">*</span>
                     </label>
                     <input
                       type="email"
@@ -260,7 +275,7 @@ export default function Contact() {
 
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Subject *
+                    Subject <span className="text-[#F7C948]">*</span>
                   </label>
                   <input
                     type="text"
@@ -276,7 +291,7 @@ export default function Contact() {
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Message *
+                    Message <span className="text-[#F7C948]">*</span>
                   </label>
                   <textarea
                     id="message"

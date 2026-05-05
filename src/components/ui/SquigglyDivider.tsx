@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function SquigglyDivider() {
   return (
-    <div className="container-custom max-w-4xl">
+    <div className="container-custom max-w-4xl mt-12 md:mt-16">
       <div className="flex items-center justify-center gap-3">
         {/* Left line */}
         <motion.div

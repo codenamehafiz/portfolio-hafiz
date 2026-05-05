@@ -72,7 +72,7 @@ function ProjectCard({ project, index, slideComplete }: {
             </div>
             {project.featured && (
               <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-accent-500 text-white text-xs font-bold rounded-full shadow-lg">
+                <span className="px-3 py-1 bg-[#F7C948] text-ink text-xs font-bold rounded-full shadow-lg">
                   Featured
                 </span>
               </div>
@@ -94,7 +94,7 @@ function ProjectCard({ project, index, slideComplete }: {
               {project.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-1 text-xs font-medium bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded"
+                  className="px-2 py-1 text-xs font-medium bg-[#F7C948]/15 text-[#a16207] dark:text-[#F7C948] rounded"
                 >
                   {tag}
                 </span>
@@ -201,8 +201,31 @@ export default function ProjectsListing() {
           transition={{ duration: 0.4 }}
           className="text-center mb-12 px-4"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            All <span className="heading-gradient">Projects</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-ink dark:text-primary-50">
+            All{' '}
+            <span className="relative inline-block">
+              Projects
+              <motion.svg
+                aria-hidden
+                className="absolute left-0 -bottom-1 md:-bottom-2 w-full h-3 md:h-4 text-[#F7C948] overflow-visible"
+                viewBox="0 0 200 12"
+                preserveAspectRatio="none"
+                fill="none"
+                initial={{ opacity: 0 }}
+                animate={slideComplete ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.2, delay: 0.5 }}
+              >
+                <motion.path
+                  d="M2 7 Q 25 1 50 7 T 100 7 T 150 7 T 198 7"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={slideComplete ? { pathLength: 1 } : { pathLength: 0 }}
+                  transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </motion.svg>
+            </span>
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Explore my complete portfolio of projects showcasing various technologies and solutions
@@ -261,7 +284,7 @@ export default function ProjectsListing() {
                     key={tech}
                     onClick={() => toggleTech(tech)}
                     className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${isSelected
-                      ? 'bg-primary-600 text-white shadow-md'
+                      ? 'bg-[#F7C948] text-ink shadow-md'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
                   >
