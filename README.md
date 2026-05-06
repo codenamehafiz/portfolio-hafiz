@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="public/images/avatar.png" alt="Hafiz Idris avatar" width="160" />
-</p>
+<img src="public/images/avatar.png" alt="Hafiz Idris avatar" width="160" />
 
 # Hafiz Idris — Portfolio
 

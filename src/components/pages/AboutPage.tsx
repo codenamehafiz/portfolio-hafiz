@@ -1,10 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, type ComponentType } from 'react';
+import { createPortal } from 'react-dom';
+import { HiOutlineBriefcase, HiOutlineCode, HiOutlinePresentationChartBar, HiX } from 'react-icons/hi';
 import About from '@/components/home/About';
 import Experience from '@/components/home/Experience';
 import Skills from '@/components/home/Skills';
+import Presentation from '@/components/home/Presentation';
 import SquigglyDivider from '@/components/ui/SquigglyDivider';
 import WorkflowBento from '@/components/ui/WorkflowBento';
 import ScrollToTop from '@/components/ui/ScrollToTop';
@@ -12,9 +15,29 @@ import { useNavigation } from '@/context/NavigationContext';
 
 type AboutTab = 'experience' | 'skills';
 
+const aboutTabs: { id: AboutTab; label: string; subtitle: string; Icon: ComponentType<{ className?: string }> }[] = [
+  { id: 'experience', label: 'Experience', subtitle: 'My professional journey', Icon: HiOutlineBriefcase },
+  { id: 'skills', label: 'Skills', subtitle: 'Tools & technologies', Icon: HiOutlineCode },
+];
+
 export default function AboutPage() {
   const { slideComplete } = useNavigation();
   const [activeTab, setActiveTab] = useState<AboutTab>('experience');
+  const [showPresentation, setShowPresentation] = useState(false);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!showPresentation) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowPresentation(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [showPresentation]);
 
   return (
     <div className="w-full">
@@ -67,31 +90,62 @@ export default function AboutPage() {
 
       <WorkflowBento />
 
+      {/* My Process CTA — opens presentation modal */}
+      <div className="container-custom max-w-4xl pt-2 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setShowPresentation(true)}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#F7C948] text-ink font-semibold shadow-sm hover:bg-[#e3b73e] transition-colors"
+        >
+          <HiOutlinePresentationChartBar className="w-5 h-5" />
+          My Process
+        </button>
+      </div>
+
       <SquigglyDivider />
 
-      {/* Tabs — Experience / Skills */}
+      {/* Tabs — Experience / Skills (icon card style) */}
       <div className="container-custom max-w-4xl pt-8">
-        <div role="tablist" aria-label="About sections" className="flex gap-2 border-b border-primary-200 dark:border-primary-800 mb-2">
-          {(['experience', 'skills'] as AboutTab[]).map((tab) => {
-            const isActive = activeTab === tab;
+        <div
+          role="tablist"
+          aria-label="About sections"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+        >
+          {aboutTabs.map(({ id, label, subtitle, Icon }) => {
+            const isActive = activeTab === id;
             return (
               <button
-                key={tab}
+                key={id}
                 role="tab"
                 aria-selected={isActive}
-                onClick={() => setActiveTab(tab)}
-                className={`relative px-4 py-3 text-sm md:text-base font-semibold capitalize transition-colors ${
+                onClick={() => setActiveTab(id)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-left border-2 transition-all ${
                   isActive
-                    ? 'text-ink dark:text-primary-50'
-                    : 'text-ink-soft/60 dark:text-primary-300/60 hover:text-ink dark:hover:text-primary-100'
+                    ? 'bg-white dark:bg-primary-900/40 border-[#F7C948] shadow-sm'
+                    : 'bg-primary-100/40 dark:bg-primary-800/30 border-transparent hover:bg-primary-100/70 dark:hover:bg-primary-800/50'
                 }`}
               >
-                {tab}
-                <span
-                  className={`absolute left-2 right-2 -bottom-px h-[3px] bg-[#F7C948] rounded-full transition-opacity duration-200 ${
-                    isActive ? 'opacity-100' : 'opacity-0'
+                <div
+                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                    isActive
+                      ? 'bg-[#F7C948]/20 text-[#F7C948]'
+                      : 'bg-primary-200/60 dark:bg-primary-700/50 text-ink-soft dark:text-primary-300'
                   }`}
-                />
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div
+                    className={`text-sm md:text-base font-semibold transition-colors ${
+                      isActive ? 'text-[#F7C948]' : 'text-ink dark:text-primary-100'
+                    }`}
+                  >
+                    {label}
+                  </div>
+                  <div className="text-xs md:text-sm text-ink-soft dark:text-primary-300">
+                    {subtitle}
+                  </div>
+                </div>
               </button>
             );
           })}
@@ -104,6 +158,46 @@ export default function AboutPage() {
       <div className={activeTab === 'skills' ? 'block' : 'hidden'}>
         <Skills />
       </div>
+
+      {/* Presentation modal overlay — portaled to document.body so it escapes
+          parent stacking contexts (page-slide motion.div uses transform,
+          which would otherwise trap the modal below the navbar). */}
+      {typeof window !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {showPresentation && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+                onClick={() => setShowPresentation(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.96, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.96, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative w-full max-w-7xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowPresentation(false)}
+                    aria-label="Close presentation"
+                    className="absolute -top-12 right-0 z-10 inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium"
+                  >
+                    <HiX className="w-5 h-5" />
+                    Close
+                  </button>
+                  <Presentation />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
 
       <ScrollToTop />
     </div>

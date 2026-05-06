@@ -151,6 +151,128 @@
   }
 }
 
+/* Reveal.js — brand overrides for embedded presentation */
+.reveal-deck {
+  --r-link-color: #F7C948;
+  --r-link-color-hover: #d6a73a;
+  --r-selection-background-color: #F7C948;
+  --r-selection-color: #0a0a0a;
+}
+.reveal-deck .reveal {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.reveal-deck .reveal .accent {
+  color: #F7C948;
+}
+.reveal-deck .reveal h1,
+.reveal-deck .reveal h2,
+.reveal-deck .reveal h3 {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Code tooltip — show code example on hover of an info chip in a slide */
+.code-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.4em;
+  cursor: help;
+  vertical-align: baseline;
+}
+.code-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: rgba(247, 201, 72, 0.18);
+  color: #8a6a18;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid rgba(247, 201, 72, 0.5);
+  user-select: none;
+}
+.code-tooltip-content {
+  position: absolute;
+  bottom: calc(100% + 0.7em);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44em;
+  max-width: 95vw;
+  padding: 1.4em 1.6em;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(247, 201, 72, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  font-size: 1em;
+  text-align: left;
+  line-height: 1.5;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+.code-tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: #1a1a1a;
+}
+.code-tooltip:hover .code-tooltip-content,
+.code-tooltip:focus-within .code-tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+.code-tooltip-content pre {
+  margin: 0.3em 0 0.6em;
+  padding: 0.7em 0.9em;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: left;
+  box-shadow: none;
+}
+.code-tooltip-content .label {
+  font-weight: 700;
+  color: #F7C948;
+  font-size: 0.95em;
+}
+.code-tooltip-content .tt-line {
+  margin: 0.3em 0 0.7em;
+  padding: 0.7em 0.9em;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 0.9em;
+  line-height: 1.5;
+  text-align: left;
+  color: #f5f5f5;
+}
+.code-tooltip-content .tt-line code {
+  background: rgba(247, 201, 72, 0.15);
+  color: #F7C948;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+.reveal-deck .reveal .progress {
+  color: #F7C948;
+}
+.reveal-deck .reveal .controls {
+  color: #F7C948;
+}
+
 /* Loading spinner */
 @keyframes spin {
   to {
